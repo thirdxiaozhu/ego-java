@@ -37,6 +37,7 @@ public class DeepSeekChatImpl  implements IChatService {
                 .logResponses(true)
                 .temperature(0.8)
                 .build();
+
         // 发送流式消息
         try {
             chatModel.chat(chatRequest.getPrompt(), new StreamingChatResponseHandler() {
@@ -45,7 +46,7 @@ public class DeepSeekChatImpl  implements IChatService {
                 public void onPartialResponse(String partialResponse) {
                     emitter.send(partialResponse);
                     log.info("收到消息片段: {}", partialResponse);
-                    System.out.print(partialResponse);
+//                    System.out.print(partialResponse);
                 }
 
                 @Override

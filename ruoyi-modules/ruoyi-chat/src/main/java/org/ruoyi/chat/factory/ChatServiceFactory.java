@@ -1,5 +1,6 @@
 package org.ruoyi.chat.factory;
 
+import lombok.extern.slf4j.Slf4j;
 import org.ruoyi.chat.service.chat.IChatService;
 import org.springframework.beans.BeansException;
 import org.springframework.context.ApplicationContext;
@@ -9,6 +10,8 @@ import org.springframework.stereotype.Component;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
+import static cn.dev33.satoken.SaManager.log;
+
 /**
  * 聊天服务工厂类
  *
@@ -16,6 +19,7 @@ import java.util.concurrent.ConcurrentHashMap;
  * date 2025/5/10
  */
 @Component
+@Slf4j
 public class ChatServiceFactory  implements ApplicationContextAware {
     private final Map<String, IChatService> chatServiceMap = new ConcurrentHashMap<>();
 
@@ -35,6 +39,8 @@ public class ChatServiceFactory  implements ApplicationContextAware {
      */
     public IChatService getChatService(String category) {
         IChatService service = chatServiceMap.get(category);
+        log.warn("service size {}", chatServiceMap.size());
+        log.warn("map: {}, category: {}, service: {}", chatServiceMap.keySet().toString(), category, service.toString());
         if (service == null) {
             throw new IllegalArgumentException("不支持的模型类别: " + category);
         }
