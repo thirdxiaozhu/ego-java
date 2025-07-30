@@ -39,8 +39,8 @@ public class ChatServiceFactory  implements ApplicationContextAware {
      */
     public IChatService getChatService(String category) {
         IChatService service = chatServiceMap.get(category);
-        log.warn("service size {}", chatServiceMap.size());
-        log.warn("map: {}, category: {}, service: {}", chatServiceMap.keySet().toString(), category, service.toString());
+//        log.warn("service size {}", chatServiceMap.size());
+//        log.warn("map: {}, category: {}, service: {}", chatServiceMap.keySet().toString(), category, service.toString());
         if (service == null) {
             throw new IllegalArgumentException("不支持的模型类别: " + category);
         }

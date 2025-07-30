@@ -80,6 +80,7 @@ public class SseServiceImpl implements ISseService {
             // 设置对话角色
             chatRequest.setRole(Message.Role.USER.getName());
 
+
             if(LoginHelper.isLogin()){
 
 				// 设置用户id
