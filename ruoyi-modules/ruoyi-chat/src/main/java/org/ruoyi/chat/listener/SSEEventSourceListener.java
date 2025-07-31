@@ -97,14 +97,19 @@ public class SSEEventSourceListener extends EventSourceListener {
                 return;
             }
             Object content = completionResponse.getChoices().get(0).getDelta().getContent();
+            Object reasoningContent = completionResponse.getChoices().get(0).getDelta().getReasoningContent();
 
             if(content != null ){
                 if(StringUtils.isEmpty(modelName)){
                     modelName = completionResponse.getModel();
                 }
                 stringBuffer.append(content);
-                emitter.send(data);
             }
+//            if(reasoningContent != null){
+//                log.info("reasoningContent: {}", reasoningContent);
+//            }
+            // for both reasoning or normal chat
+            emitter.send(data);
         } catch (Exception e) {
             log.error(e.getMessage(), e);
         }

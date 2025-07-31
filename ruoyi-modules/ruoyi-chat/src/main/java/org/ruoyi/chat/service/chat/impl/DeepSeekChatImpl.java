@@ -79,11 +79,10 @@ public class DeepSeekChatImpl  implements IChatService {
         List<Message> messages = chatRequest.getMessages();
         String token = StpUtil.getTokenValue();
         SSEEventSourceListener listener = new SSEEventSourceListener(emitter,chatRequest.getUserId(),chatRequest.getSessionId(), token);
-        log.warn("!!!!!!!!!!! {}, {}, {}", chatRequest.getUserId(),chatRequest.getSessionId(), token);
         ChatCompletion completion = ChatCompletion
                 .builder()
                 .messages(messages)
-                .model(chatModelVo.getModelName())
+                .model(chatRequest.getModel())
                 .stream(true)
                 .build();
         openAiStreamClient.streamChatCompletion(completion, listener);

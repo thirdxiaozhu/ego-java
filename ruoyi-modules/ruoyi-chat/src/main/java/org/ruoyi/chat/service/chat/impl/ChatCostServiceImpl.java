@@ -60,6 +60,8 @@ public class ChatCostServiceImpl implements IChatCostService {
 
         String modelName = chatRequest.getModel();
 
+        log.warn("?????????????? {}", modelName);
+
         ChatMessageBo chatMessageBo = new ChatMessageBo();
 
         // 设置用户id

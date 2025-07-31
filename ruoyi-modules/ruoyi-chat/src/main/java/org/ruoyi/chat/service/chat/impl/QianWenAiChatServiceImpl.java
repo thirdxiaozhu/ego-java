@@ -1,5 +1,6 @@
 package org.ruoyi.chat.service.chat.impl;
 
+import dev.langchain4j.community.model.dashscope.QwenChatRequestParameters;
 import dev.langchain4j.community.model.dashscope.QwenStreamingChatModel;
 import dev.langchain4j.model.chat.StreamingChatModel;
 import dev.langchain4j.model.chat.response.ChatResponse;
@@ -30,9 +31,12 @@ public class QianWenAiChatServiceImpl  implements IChatService {
     @Override
     public SseEmitter chat(ChatRequest chatRequest, SseEmitter emitter) {
         ChatModelVo chatModelVo = chatModelService.selectModelByName(chatRequest.getModel());
+
+        QwenChatRequestParameters qwenParameters = QwenChatRequestParameters.builder().enableThinking(true).build();
         StreamingChatModel model = QwenStreamingChatModel.builder()
                 .apiKey(chatModelVo.getApiKey())
                 .modelName(chatModelVo.getModelName())
+                .defaultRequestParameters(qwenParameters)
                 .build();
 
 
