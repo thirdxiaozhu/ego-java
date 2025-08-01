@@ -21,7 +21,7 @@ import org.ruoyi.common.oss.entity.UploadResult;
 import org.ruoyi.common.oss.enumd.AccessPolicyType;
 import org.ruoyi.common.oss.enumd.PolicyType;
 import org.ruoyi.common.oss.exception.OssException;
-import org.ruoyi.common.oss.properties.OssProperties;
+import org.ruoyi.common.oss.config.properties.OssProperties;
 
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;

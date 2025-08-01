@@ -1,6 +1,7 @@
-package org.ruoyi.common.oss.properties;
+package org.ruoyi.common.oss.config.properties;
 
 import lombok.Data;
+import org.springframework.boot.context.properties.ConfigurationProperties;
 
 /**
  * OSS对象存储 配置属性
@@ -8,6 +9,7 @@ import lombok.Data;
  * @author Lion Li
  */
 @Data
+@ConfigurationProperties(prefix = "oss")
 public class OssProperties {
 
     /**

@@ -7,7 +7,7 @@ import org.ruoyi.common.json.utils.JsonUtils;
 import org.ruoyi.common.oss.constant.OssConstant;
 import org.ruoyi.common.oss.core.OssClient;
 import org.ruoyi.common.oss.exception.OssException;
-import org.ruoyi.common.oss.properties.OssProperties;
+import org.ruoyi.common.oss.config.properties.OssProperties;
 import org.ruoyi.common.redis.utils.CacheUtils;
 import org.ruoyi.common.redis.utils.RedisUtils;
 
