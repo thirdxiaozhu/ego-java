@@ -554,7 +554,7 @@ CREATE TABLE `sys_menu`  (
 -- Records of sys_menu
 -- ----------------------------
 INSERT INTO `sys_menu` VALUES (1, '系统管理', 0, 2, 'system', NULL, '', 1, 0, 'M', '0', '0', '', 'eos-icons:system-group', 103, 1, '2023-05-14 15:19:39', 1, '2024-10-06 21:08:06', '系统管理目录');
-INSERT INTO `sys_menu` VALUES (100, '用户管理', 1775500307898949634, 1, 'user', 'system/user/index', '', 1, 0, 'C', '0', '0', 'system:user:list', 'ph:user-fill', 103, 1, '2023-05-14 15:19:39', 1, '2024-10-07 21:29:29', '用户管理菜单');
+INSERT INTO `sys_menu` VALUES (100, '用户管理', 1775500307898949634, 1, 'user', 'operator/user/index', '', 1, 0, 'C', '0', '0', 'system:user:list', 'ph:user-fill', 103, 1, '2023-05-14 15:19:39', 1, '2024-10-07 21:29:29', '用户管理菜单');
 INSERT INTO `sys_menu` VALUES (101, '角色管理', 1, 2, 'role', 'system/role/index', '', 1, 0, 'C', '0', '0', 'system:role:list', 'ri:user-3-fill', 103, 1, '2023-05-14 15:19:39', 1, '2024-10-07 21:04:59', '角色管理菜单');
 INSERT INTO `sys_menu` VALUES (102, '菜单管理', 1, 3, 'menu', 'system/menu/index', '', 1, 0, 'C', '0', '0', 'system:menu:list', 'typcn:th-menu-outline', 103, 1, '2023-05-14 15:19:39', 1, '2024-10-07 21:06:06', '菜单管理菜单');
 INSERT INTO `sys_menu` VALUES (103, '部门管理', 1, 4, 'dept', 'system/dept/index', '', 1, 0, 'C', '1', '1', 'system:dept:list', 'mdi:company', 103, 1, '2023-05-14 15:19:39', 1, '2024-10-07 21:07:38', '部门管理菜单');
@@ -613,33 +613,34 @@ INSERT INTO `sys_menu` VALUES (1044, '登录删除', 501, 2, '#', '', '', 1, 0, 
 INSERT INTO `sys_menu` VALUES (1045, '日志导出', 501, 3, '#', '', '', 1, 0, 'F', '0', '0', 'monitor:logininfor:export', '#', 103, 1, '2023-05-14 15:19:40', NULL, NULL, '');
 INSERT INTO `sys_menu` VALUES (1050, '账户解锁', 501, 4, '#', '', '', 1, 0, 'F', '0', '0', 'monitor:logininfor:unlock', '#', 103, 1, '2023-05-14 15:19:40', NULL, NULL, '');
 INSERT INTO `sys_menu` VALUES (1775500307898949634, '运营管理', 0, 0, 'operate', NULL, NULL, 1, 0, 'M', '0', '0', NULL, 'icon-park-outline:appointment', 103, 1, '2024-04-03 20:27:15', 1, '2024-10-06 21:10:18', '');
-INSERT INTO `sys_menu` VALUES (1775895273104068610, '系统模型', 1775500307898949634, 2, 'model', 'system/model/index', NULL, 1, 0, 'C', '0', '0', 'system:model:list', 'ph:list-fill', 103, 1, '2024-04-05 12:00:38', 1, '2024-10-07 21:36:00', '系统模型菜单');
+INSERT INTO `sys_menu` VALUES (1775895273104068610, '系统模型', 1775500307898949634, 2, 'model', 'operator/model/index', NULL, 1, 0, 'C', '0', '0', 'system:model:list', 'ph:list-fill', 103, 1, '2024-04-05 12:00:38', 1, '2024-10-07 21:36:00', '系统模型菜单');
 INSERT INTO `sys_menu` VALUES (1775895273104068611, '系统模型查询', 1775895273104068610, 1, '#', '', NULL, 1, 0, 'F', '0', '0', 'system:model:query', '#', 103, 1, '2024-04-05 12:00:38', NULL, NULL, '');
 INSERT INTO `sys_menu` VALUES (1775895273104068612, '系统模型新增', 1775895273104068610, 2, '#', '', NULL, 1, 0, 'F', '0', '0', 'system:model:add', '#', 103, 1, '2024-04-05 12:00:38', NULL, NULL, '');
 INSERT INTO `sys_menu` VALUES (1775895273104068613, '系统模型修改', 1775895273104068610, 3, '#', '', NULL, 1, 0, 'F', '0', '0', 'system:model:edit', '#', 103, 1, '2024-04-05 12:00:38', NULL, NULL, '');
 INSERT INTO `sys_menu` VALUES (1775895273104068614, '系统模型删除', 1775895273104068610, 4, '#', '', NULL, 1, 0, 'F', '0', '0', 'system:model:remove', '#', 103, 1, '2024-04-05 12:00:38', NULL, NULL, '');
 INSERT INTO `sys_menu` VALUES (1775895273104068615, '系统模型导出', 1775895273104068610, 5, '#', '', NULL, 1, 0, 'F', '0', '0', 'system:model:export', '#', 103, 1, '2024-04-05 12:00:38', NULL, NULL, '');
-INSERT INTO `sys_menu` VALUES (1780240077690507266, '聊天消息', 1775500307898949634, 5, 'chatMessage', 'system/message/index', NULL, 1, 0, 'C', '0', '0', 'system:message:list', 'bx:chat', 103, 1, '2024-04-16 22:24:48', 1, '2024-10-07 21:38:49', '聊天消息菜单');
+INSERT INTO `sys_menu` VALUES (1780240077690507266, '聊天消息', 1775500307898949634, 5, 'chatMessage', 'operator/message/index', NULL, 1, 0, 'C', '0', '0', 'system:message:list', 'bx:chat', 103, 1, '2024-04-16 22:24:48', 1, '2024-10-07 21:38:49', '聊天消息菜单');
 INSERT INTO `sys_menu` VALUES (1780240077690507267, '聊天消息查询', 1780240077690507266, 1, '#', '', NULL, 1, 0, 'F', '0', '0', 'system:message:query', '#', 103, 1, '2024-04-16 22:24:48', NULL, NULL, '');
 INSERT INTO `sys_menu` VALUES (1780240077690507268, '聊天消息新增', 1780240077690507266, 2, '#', '', NULL, 1, 0, 'F', '0', '0', 'system:message:add', '#', 103, 1, '2024-04-16 22:24:48', NULL, NULL, '');
 INSERT INTO `sys_menu` VALUES (1780240077690507269, '聊天消息修改', 1780240077690507266, 3, '#', '', NULL, 1, 0, 'F', '0', '0', 'system:message:edit', '#', 103, 1, '2024-04-16 22:24:48', NULL, NULL, '');
 INSERT INTO `sys_menu` VALUES (1780240077690507270, '聊天消息删除', 1780240077690507266, 4, '#', '', NULL, 1, 0, 'F', '0', '0', 'system:message:remove', '#', 103, 1, '2024-04-16 22:24:48', NULL, NULL, '');
 INSERT INTO `sys_menu` VALUES (1780240077690507271, '聊天消息导出', 1780240077690507266, 5, '#', '', NULL, 1, 0, 'F', '0', '0', 'system:message:export', '#', 103, 1, '2024-04-16 22:24:48', NULL, NULL, '');
-INSERT INTO `sys_menu` VALUES (1780255628576018433, '支付订单', 1775500307898949634, 6, 'order', 'system/payOrder/index', NULL, 1, 0, 'C', '0', '0', 'system:order:list', 'material-symbols:order-approve', 103, 1, '2024-04-16 23:32:48', 1, '2025-03-30 21:12:38', '支付订单菜单');
+INSERT INTO `sys_menu` VALUES (1780255628576018433, '支付订单', 1775500307898949634, 6, 'order', 'operator/payOrder/index', NULL, 1, 0, 'C', '0', '0', 'system:order:list', 'material-symbols:order-approve', 103, 1, '2024-04-16 23:32:48', 1, '2025-03-30 21:12:38', '支付订单菜单');
 INSERT INTO `sys_menu` VALUES (1780255628576018434, '支付订单查询', 1780255628576018433, 1, '#', '', NULL, 1, 0, 'F', '0', '0', 'system:orders:query', '#', 103, 1, '2024-04-16 23:32:48', NULL, NULL, '');
 INSERT INTO `sys_menu` VALUES (1780255628576018435, '支付订单新增', 1780255628576018433, 2, '#', '', NULL, 1, 0, 'F', '0', '0', 'system:orders:add', '#', 103, 1, '2024-04-16 23:32:48', NULL, NULL, '');
 INSERT INTO `sys_menu` VALUES (1780255628576018436, '支付订单修改', 1780255628576018433, 3, '#', '', NULL, 1, 0, 'F', '0', '0', 'system:orders:edit', '#', 103, 1, '2024-04-16 23:32:48', NULL, NULL, '');
 INSERT INTO `sys_menu` VALUES (1780255628576018437, '支付订单删除', 1780255628576018433, 4, '#', '', NULL, 1, 0, 'F', '0', '0', 'system:orders:remove', '#', 103, 1, '2024-04-16 23:32:48', NULL, NULL, '');
 INSERT INTO `sys_menu` VALUES (1780255628576018438, '支付订单导出', 1780255628576018433, 5, '#', '', NULL, 1, 0, 'F', '0', '0', 'system:orders:export', '#', 103, 1, '2024-04-16 23:32:48', NULL, NULL, '');
-INSERT INTO `sys_menu` VALUES (1843281231381852162, '文件管理', 1775500307898949634, 20, 'file', 'system/oss/index', NULL, 1, 0, 'C', '0', '0', NULL, 'material-symbols-light:folder', 103, 1, '2024-10-07 21:24:27', 1, '2024-12-27 23:03:04', '');
-INSERT INTO `sys_menu` VALUES (1898286496441393153, '知识库管理', 1775500307898949634, 10, 'knowledgeBase', 'system/knowledgeBase/index', NULL, 1, 0, 'C', '0', '0', '', 'garden:knowledge-base-26', 103, 1, '2025-03-08 16:15:44', 1, '2025-03-10 00:21:26', '');
-INSERT INTO `sys_menu` VALUES (1906674838461321217, '配置信息', 1775500307898949634, 13, 'configurationManage', 'system/configurationManage/index', '', 1, 0, 'C', '0', '0', 'system:config:list', 'mdi:archive-cog-outline', 103, 1, '2025-03-31 19:48:48', 1, '2025-03-31 19:59:58', '配置信息菜单');
+INSERT INTO `sys_menu` VALUES (1843281231381852162, '文件管理', 1775500307898949634, 20, 'file', 'operator/oss/index', NULL, 1, 0, 'C', '0', '0', NULL, 'material-symbols-light:folder', 103, 1, '2024-10-07 21:24:27', 1, '2024-12-27 23:03:04', '');
+INSERT INTO `sys_menu` VALUES (1898286496441393153, '知识库管理', 1775500307898949634, 10, 'knowledgeBase', 'operator/knowledgeBase/index', NULL, 1, 0, 'C', '0', '0', '', 'garden:knowledge-base-26', 103, 1, '2025-03-08 16:15:44', 1, '2025-03-10 00:21:26', '');
+INSERT INTO `sys_menu` VALUES (1946483381643743233, '知识库角色管理', 1775500307898949634, 12, 'knowledgeRole', 'operator/knowledgeRole/index', NULL, 1, 0, 'C', '0', '0', NULL, 'ri:user-3-fill', 103, 1, '2025-07-19 16:41:17', NULL, NULL, '知识库角色管理');
+INSERT INTO `sys_menu` VALUES (1906674838461321217, '配置信息', 1775500307898949634, 13, 'configurationManage', 'operator/configurationManage/index', '', 1, 0, 'C', '0', '0', 'system:config:list', 'mdi:archive-cog-outline', 103, 1, '2025-03-31 19:48:48', 1, '2025-03-31 19:59:58', '配置信息菜单');
 INSERT INTO `sys_menu` VALUES (1906674838461321218, '配置信息查询', 1906674838461321217, 1, '#', '', NULL, 1, 0, 'F', '0', '0', 'system:config:query', '#', 103, 1, '2025-03-31 19:48:48', NULL, NULL, '');
 INSERT INTO `sys_menu` VALUES (1906674838461321219, '配置信息新增', 1906674838461321217, 2, '#', '', NULL, 1, 0, 'F', '0', '0', 'system:config:add', '#', 103, 1, '2025-03-31 19:48:48', NULL, NULL, '');
 INSERT INTO `sys_menu` VALUES (1906674838461321220, '配置信息修改', 1906674838461321217, 3, '#', '', NULL, 1, 0, 'F', '0', '0', 'system:config:edit', '#', 103, 1, '2025-03-31 19:48:48', NULL, NULL, '');
 INSERT INTO `sys_menu` VALUES (1906674838461321221, '配置信息删除', 1906674838461321217, 4, '#', '', NULL, 1, 0, 'F', '0', '0', 'system:config:remove', '#', 103, 1, '2025-03-31 19:48:48', NULL, NULL, '');
 INSERT INTO `sys_menu` VALUES (1906674838461321222, '配置信息导出', 1906674838461321217, 5, '#', '', NULL, 1, 0, 'F', '0', '0', 'system:config:export', '#', 103, 1, '2025-03-31 19:48:48', NULL, NULL, '');
-INSERT INTO `sys_menu` VALUES (1929170702299045890, '提示词模板', 1775500307898949634, '1', 'promptTemplate', 'system/promptTemplate/index', '', 1, 0, 'C', '0', '0', 'system:promptTemplate:list', 'fluent:prompt-16-filled', 103, 1, sysdate(), null, null, '提示词模板菜单');
+INSERT INTO `sys_menu` VALUES (1929170702299045890, '提示词模板', 1775500307898949634, '1', 'promptTemplate', 'operator/promptTemplate/index', '', 1, 0, 'C', '0', '0', 'system:promptTemplate:list', 'fluent:prompt-16-filled', 103, 1, sysdate(), null, null, '提示词模板菜单');
 INSERT INTO `sys_menu` VALUES (1929170702299045891, '提示词模板查询', 1929170702299045890, '1',  '#', '', NULL, 1, 0, 'F', '0', '0', 'system:promptTemplate:query',        '#', 103, 1, sysdate(), null, null, '');
 INSERT INTO `sys_menu` VALUES (1929170702299045892, '提示词模板新增', 1929170702299045890, '2',  '#', '', NULL, 1, 0, 'F', '0', '0', 'system:promptTemplate:add',          '#', 103, 1, sysdate(), null, null, '');
 INSERT INTO `sys_menu` VALUES (1929170702299045893, '提示词模板修改', 1929170702299045890, '3',  '#', '', NULL, 1, 0, 'F', '0', '0', 'system:promptTemplate:edit',         '#', 103, 1, sysdate(), null, null, '');
@@ -1438,11 +1439,16 @@ CREATE TABLE `sys_user`  (
                              PRIMARY KEY (`user_id`) USING BTREE
 ) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '用户信息表' ROW_FORMAT = Dynamic;
 
+-- 用户表添加字段
+ALTER TABLE sys_user
+    ADD COLUMN `krole_group_type` VARCHAR(50) COMMENT '关联知识库角色/角色组',
+ADD COLUMN `krole_group_ids` TEXT COMMENT '关联知识库角色/角色组id';
+
 -- ----------------------------
 -- Records of sys_user
 -- ----------------------------
 INSERT INTO `sys_user` (`user_id`, `open_id`, `user_grade`, `user_balance`, `tenant_id`, `dept_id`, `user_name`, `nick_name`, `user_type`, `user_plan`, `email`, `phonenumber`, `sex`, `avatar`, `wx_avatar`, `password`, `status`, `del_flag`, `login_ip`, `login_date`, `domain_name`, `create_dept`, `create_by`, `create_time`, `update_by`, `update_time`, `remark`) VALUES (1, NULL, '1', 855.40, '00000', 103, 'admin', 'admin', 'sys_user', 'Free', 'ageerle@163.com', '15888888888', '0', 'https://ruoyi-ai-1254149996.cos.ap-guangzhou.myqcloud.com/2025/05/24/727370b029b648ea968977085da2b20f.jpg', NULL, '$2a$10$7JB720yubVSZvUI0rEqK/.VqGOZTH.ulu33dHOiBE8ByOhJIrdAu2', '0', '0', '127.0.0.1', '2025-05-26 09:26:03', NULL, 103, 1, '2023-05-14 15:19:39', 1, '2025-05-26 09:26:03', '管理员');
-INSERT INTO `sys_user` VALUES (1905928435494330370, NULL, '1', 100.00, '000000', 103, 'ageerle@163.com', '熊猫助手', 'sys_user', 'Free', 'ageerle@163.com', '', '0', NULL, NULL, '$2a$10$8WO.FFcmu4L/DhzpfM4rbee0HRK6gIYIs2KsRXkc4ckjudbzchvPi', '0', '2', '', NULL, NULL, 103, 1, '2025-03-29 18:22:04', 1, '2025-03-31 10:15:11', '备用账号');
+INSERT INTO `sys_user` VALUES (1905928435494330370, NULL, '1', 100.00, '000000', 103, 'ageerle@163.com', '熊猫助手',  'sys_user', 'Free', 'ageerle@163.com', '', '0', NULL, NULL, '$2a$10$8WO.FFcmu4L/DhzpfM4rbee0HRK6gIYIs2KsRXkc4ckjudbzchvPi', '0', '2', '', NULL, NULL, 103, 1, '2025-03-29 18:22:04', 1, '2025-03-31 10:15:11', '备用账号', null, null);
 
 -- ----------------------------
 -- Table structure for sys_user_post
@@ -2636,5 +2642,61 @@ INSERT INTO dev_schema_group (id, name, code, icon, sort, status, remark, del_fl
 INSERT INTO dev_schema_group (id, name, code, icon, sort, status, remark, del_flag, tenant_id, create_dept, create_by, create_time, update_by, update_time) VALUES (1944240213530648577, '运营管理', 'operator', 'icon-park-outline:appointment', 1, '0', null, '0', '000000', null, null, '2025-07-13 11:39:24', 1, '2025-07-13 18:42:31');
 INSERT INTO dev_schema_group (id, name, code, icon, sort, status, remark, del_flag, tenant_id, create_dept, create_by, create_time, update_by, update_time) VALUES (1944346023254429697, '在线开发', 'dev', 'carbon:development', 3, '0', null, '0', '000000', null, null, '2025-07-13 18:39:51', 1, '2025-07-13 18:42:07');
 
+
+
+
+
+-- ----------------------------
+-- Table structure for knowledge_role
+-- ----------------------------
+DROP TABLE IF EXISTS `knowledge_role`;
+CREATE TABLE `knowledge_role`  (
+                                   `id` bigint NOT NULL COMMENT '知识库角色id',
+                                   `name` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT '知识库角色name',
+                                   `del_flag` char(1) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT '0' COMMENT '删除标志（0代表存在 2代表删除）',
+                                   `create_dept` bigint NULL DEFAULT NULL COMMENT '创建部门',
+                                   `create_by` bigint NULL DEFAULT NULL COMMENT '创建者',
+                                   `create_time` datetime NULL DEFAULT NULL COMMENT '创建时间',
+                                   `update_by` bigint NULL DEFAULT NULL COMMENT '更新者',
+                                   `update_time` datetime NULL DEFAULT NULL COMMENT '更新时间',
+                                   `remark` varchar(500) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT '备注',
+                                   `group_id` bigint NULL DEFAULT NULL COMMENT '知识库角色组id',
+                                   PRIMARY KEY (`id`) USING BTREE
+) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '知识库角色表' ROW_FORMAT = DYNAMIC;
+
+-- ----------------------------
+-- Table structure for knowledge_role_group
+-- ----------------------------
+DROP TABLE IF EXISTS `knowledge_role_group`;
+CREATE TABLE `knowledge_role_group`  (
+                                         `id` bigint NOT NULL COMMENT '知识库角色组id',
+                                         `name` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT '知识库角色组name',
+                                         `del_flag` char(1) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT '0' COMMENT '删除标志（0代表存在 2代表删除）',
+                                         `create_dept` bigint NULL DEFAULT NULL COMMENT '创建部门',
+                                         `create_by` bigint NULL DEFAULT NULL COMMENT '创建者',
+                                         `create_time` datetime NULL DEFAULT NULL COMMENT '创建时间',
+                                         `update_by` bigint NULL DEFAULT NULL COMMENT '更新者',
+                                         `update_time` datetime NULL DEFAULT NULL COMMENT '更新时间',
+                                         `remark` varchar(500) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT '备注',
+                                         PRIMARY KEY (`id`) USING BTREE
+) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '知识库角色组表' ROW_FORMAT = DYNAMIC;
+
+-- ----------------------------
+-- Table structure for knowledge_role_relation
+-- ----------------------------
+DROP TABLE IF EXISTS `knowledge_role_relation`;
+CREATE TABLE `knowledge_role_relation`  (
+                                            `id` bigint NOT NULL COMMENT 'id',
+                                            `del_flag` char(1) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT '0' COMMENT '删除标志（0代表存在 2代表删除）',
+                                            `create_dept` bigint NULL DEFAULT NULL COMMENT '创建部门',
+                                            `create_by` bigint NULL DEFAULT NULL COMMENT '创建者',
+                                            `create_time` datetime NULL DEFAULT NULL COMMENT '创建时间',
+                                            `update_by` bigint NULL DEFAULT NULL COMMENT '更新者',
+                                            `update_time` datetime NULL DEFAULT NULL COMMENT '更新时间',
+                                            `remark` varchar(500) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT '备注',
+                                            `knowledge_role_id` bigint NULL DEFAULT NULL COMMENT '知识库角色id',
+                                            `knowledge_id` bigint NULL DEFAULT NULL COMMENT '知识库id',
+                                            PRIMARY KEY (`id`) USING BTREE
+) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '知识库角色与知识库关联表' ROW_FORMAT = DYNAMIC;
 
 SET FOREIGN_KEY_CHECKS = 1;
