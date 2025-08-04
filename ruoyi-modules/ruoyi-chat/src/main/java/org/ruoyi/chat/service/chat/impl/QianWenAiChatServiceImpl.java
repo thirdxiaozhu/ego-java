@@ -4,6 +4,7 @@ import dev.langchain4j.community.model.dashscope.QwenChatRequestParameters;
 import dev.langchain4j.community.model.dashscope.QwenStreamingChatModel;
 import dev.langchain4j.model.chat.StreamingChatModel;
 import dev.langchain4j.model.chat.response.ChatResponse;
+import dev.langchain4j.model.chat.response.PartialThinking;
 import dev.langchain4j.model.chat.response.StreamingChatResponseHandler;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
@@ -39,11 +40,19 @@ public class QianWenAiChatServiceImpl  implements IChatService {
                 .defaultRequestParameters(qwenParameters)
                 .build();
 
+        //TODO: 把Message转换为ChatMessage
 
 
         // 发送流式消息
         try {
             model.chat(chatRequest.getPrompt(), new StreamingChatResponseHandler() {
+
+                @SneakyThrows
+                @Override
+                public void onPartialThinking(PartialThinking partialThinking) {
+                    emitter.send(partialThinking.text());
+                }
+
                 @SneakyThrows
                 @Override
                 public void onPartialResponse(String partialResponse) {
@@ -54,7 +63,7 @@ public class QianWenAiChatServiceImpl  implements IChatService {
                 @Override
                 public void onCompleteResponse(ChatResponse completeResponse) {
                     emitter.complete();
-                    log.info("消息结束，完整消息ID: {}", completeResponse);
+                    log.info("qwen消息结束，完整消息ID: {}", completeResponse);
                 }
 
                 @Override

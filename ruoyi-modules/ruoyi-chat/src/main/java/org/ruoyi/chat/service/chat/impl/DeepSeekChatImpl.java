@@ -77,6 +77,9 @@ public class DeepSeekChatImpl  implements IChatService {
         ChatModelVo chatModelVo = chatModelService.selectModelByName(chatRequest.getModel());
         OpenAiStreamClient openAiStreamClient = ChatConfig.createOpenAiStreamClient(chatModelVo.getApiHost(), chatModelVo.getApiKey());
         List<Message> messages = chatRequest.getMessages();
+//        for(Message msg : messages){
+//            log.warn("}}}}}} {}", msg.getRole());
+//        }
         String token = StpUtil.getTokenValue();
         SSEEventSourceListener listener = new SSEEventSourceListener(emitter,chatRequest.getUserId(),chatRequest.getSessionId(), token);
         ChatCompletion completion = ChatCompletion
