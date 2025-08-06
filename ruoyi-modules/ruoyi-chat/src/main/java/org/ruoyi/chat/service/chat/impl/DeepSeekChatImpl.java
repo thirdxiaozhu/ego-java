@@ -2,11 +2,6 @@ package org.ruoyi.chat.service.chat.impl;
 
 
 import cn.dev33.satoken.stp.StpUtil;
-import dev.langchain4j.model.chat.StreamingChatModel;
-import dev.langchain4j.model.chat.response.ChatResponse;
-import dev.langchain4j.model.chat.response.StreamingChatResponseHandler;
-import dev.langchain4j.model.openai.OpenAiStreamingChatModel;
-import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.ruoyi.chat.config.ChatConfig;
 import org.ruoyi.chat.enums.ChatModeType;
@@ -16,7 +11,6 @@ import org.ruoyi.common.chat.entity.chat.ChatCompletion;
 import org.ruoyi.common.chat.entity.chat.Message;
 import org.ruoyi.common.chat.openai.OpenAiStreamClient;
 import org.ruoyi.common.chat.request.ChatRequest;
-import org.ruoyi.common.satoken.utils.LoginHelper;
 import org.ruoyi.domain.vo.ChatModelVo;
 import org.ruoyi.service.IChatModelService;
 import org.springframework.beans.factory.annotation.Autowired;

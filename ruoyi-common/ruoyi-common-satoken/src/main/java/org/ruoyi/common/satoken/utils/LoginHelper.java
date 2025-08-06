@@ -81,6 +81,7 @@ public class LoginHelper {
             loginUser =  (LoginUser) tokenSession.get(LOGIN_USER_KEY);
             SaHolder.getStorage().set(LOGIN_USER_KEY, loginUser);
         };
+        log.warn("=========== {}", loginUser);
         return loginUser;
     }
 

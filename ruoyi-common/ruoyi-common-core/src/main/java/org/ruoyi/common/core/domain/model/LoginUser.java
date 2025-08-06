@@ -65,7 +65,7 @@ public class LoginUser implements Serializable {
     /**
      * 登录IP地址
      */
-    private String ipaddr;
+    private String loginIP;
 
     /**
      * 登录地点
@@ -96,6 +96,11 @@ public class LoginUser implements Serializable {
      * 用户名
      */
     private String username;
+
+    /**
+     * 用户余额
+     */
+    private Double userBalance;
 
     /**
      * 用户名

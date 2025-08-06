@@ -10,6 +10,7 @@ import org.ruoyi.common.chat.entity.Tts.TextToSpeech;
 import org.ruoyi.common.chat.entity.files.UploadFileResponse;
 import org.ruoyi.common.chat.entity.whisper.WhisperResponse;
 import org.ruoyi.common.chat.request.ChatRequest;
+import org.ruoyi.common.satoken.utils.LoginHelper;
 import org.springframework.core.io.Resource;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
@@ -39,6 +40,7 @@ public class ChatController {
     @ResponseBody
     public SseEmitter sseChat(@RequestBody @Valid ChatRequest chatRequest, HttpServletRequest request) {
         return sseService.sseChat(chatRequest,request);
+
     }
 
     /**

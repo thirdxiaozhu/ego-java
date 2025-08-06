@@ -40,6 +40,7 @@ public class QianWenAiChatServiceImpl  implements IChatService {
                 .defaultRequestParameters(qwenParameters)
                 .build();
 
+
         //TODO: 把Message转换为ChatMessage
 
 

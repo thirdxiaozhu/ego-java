@@ -249,6 +249,9 @@ public class SysLoginService {
         loginUser.setUserId(user.getUserId());
         loginUser.setDeptId(user.getDeptId());
         loginUser.setUsername(user.getUserName());
+        loginUser.setNickName(user.getNickName());
+        loginUser.setUserBalance(user.getUserBalance());
+        loginUser.setLoginIP(user.getLoginIp());
         loginUser.setAvatar(user.getAvatar());
         loginUser.setUserType(user.getUserType());
         loginUser.setKroleGroupIds(user.getKroleGroupIds());
