@@ -341,6 +341,7 @@
         <module>ruoyi-modules-api</module>
         <module>ruoyi-admin</module>
         <module>ruoyi-extend</module>
+        <module>ego-addon</module>
     </modules>
 
     <packaging>pom</packaging>
