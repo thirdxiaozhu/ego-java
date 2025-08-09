@@ -60,8 +60,6 @@ public class ChatCostServiceImpl implements IChatCostService {
 
         String modelName = chatRequest.getModel();
 
-        log.warn("?????????????? {}", modelName);
-
         ChatMessageBo chatMessageBo = new ChatMessageBo();
 
         // 设置用户id
@@ -136,9 +134,6 @@ public class ChatCostServiceImpl implements IChatCostService {
             chatTokenService.editToken(chatToken);
         }
 
-
-
-
         // 保存消息记录
         chatMessageService.insertByBo(chatMessageBo);
 
@@ -161,22 +156,20 @@ public class ChatCostServiceImpl implements IChatCostService {
         }
 
         Double userBalance = sysUser.getUserBalance();
-
-
         System.out.println("deductUserBalance->准备扣除：numberCost: "+numberCost);
         System.out.println("deductUserBalance->剩余金额：userBalance: "+userBalance);
 
+        double newBalance = Math.max(userBalance - numberCost, 0);
 
-        if (userBalance < numberCost || userBalance == 0) {
+        sysUserMapper.update(null,
+                new LambdaUpdateWrapper<SysUser>()
+                        .set(SysUser::getUserBalance, newBalance)
+                        .eq(SysUser::getUserId, userId));
+
+        if (userBalance < numberCost) {
             throw new ServiceException("余额不足, 请充值");
         }
 
-
-
-        sysUserMapper.update(null,
-            new LambdaUpdateWrapper<SysUser>()
-                .set(SysUser::getUserBalance, Math.max(userBalance - numberCost, 0))
-                .eq(SysUser::getUserId, userId));
     }
 
     /**
