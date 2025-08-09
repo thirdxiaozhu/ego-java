@@ -7,7 +7,6 @@ import lombok.EqualsAndHashCode;
 import org.ruoyi.core.domain.BaseEntity;
 
 import java.io.Serial;
-import java.math.BigDecimal;
 
 /**
  * Ego推送 ego_push
@@ -17,7 +16,7 @@ import java.math.BigDecimal;
  */
 @Data
 @EqualsAndHashCode(callSuper = true)
-@TableName("chat_message")
+@TableName("ego_push")
 public class EgoPush extends BaseEntity {
 
     @Serial
@@ -30,44 +29,33 @@ public class EgoPush extends BaseEntity {
     private Long id;
 
     /**
-     * 用户id
+     * 用户id（作者）
      */
     private Long userId;
 
     /**
-     * 会话id
+     * 推送标题
      */
-    private Long sessionId;
+    private String title;
 
     /**
-     * 消息内容
+     * 推送内容（富文本）
      */
     private String content;
 
     /**
-     * 对话角色
+     * 推送类型
      */
-    private String role;
+    private String type;
 
     /**
-     * 扣除金额
+     * 状态（0正常 1停用）
      */
-    private BigDecimal deductCost;
-
-    /**
-     * 累计 Tokens
-     */
-    private Long totalTokens;
-
-    /**
-     * 模型名称
-     */
-    private String modelName;
+    private String status;
 
     /**
      * 备注
      */
     private String remark;
-
 
 }

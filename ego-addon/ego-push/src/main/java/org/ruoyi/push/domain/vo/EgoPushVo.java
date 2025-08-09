@@ -8,7 +8,6 @@ import org.ruoyi.push.domain.EgoPush;
 
 import java.io.Serial;
 import java.io.Serializable;
-import java.math.BigDecimal;
 import java.util.Date;
 
 
@@ -33,45 +32,34 @@ public class EgoPushVo implements Serializable {
     private Long id;
 
     /**
-     * 用户id
+     * 用户id（作者）
      */
-    @ExcelProperty(value = "用户id")
+    @ExcelProperty(value = "作者ID")
     private Long userId;
 
     /**
-     * 会话id
+     * 推送标题
      */
-    private Long sessionId;
+    @ExcelProperty(value = "推送标题")
+    private String title;
 
     /**
-     * 消息内容
+     * 推送内容（富文本）
      */
-    @ExcelProperty(value = "消息内容")
+    @ExcelProperty(value = "推送内容")
     private String content;
 
     /**
-     * 对话角色
+     * 推送类型
      */
-    @ExcelProperty(value = "对话角色")
-    private String role;
+    @ExcelProperty(value = "推送类型")
+    private String type;
 
     /**
-     * 扣除金额
+     * 状态（0正常 1停用）
      */
-    @ExcelProperty(value = "扣除金额")
-    private BigDecimal deductCost;
-
-    /**
-     * 累计 Tokens
-     */
-    @ExcelProperty(value = "累计 Tokens")
-    private Long totalTokens;
-
-    /**
-     * 模型名称
-     */
-    @ExcelProperty(value = "模型名称")
-    private String modelName;
+    @ExcelProperty(value = "状态")
+    private String status;
 
     /**
      * 备注
@@ -79,12 +67,16 @@ public class EgoPushVo implements Serializable {
     @ExcelProperty(value = "备注")
     private String remark;
 
-
     /**
      * 创建时间
      */
     @ExcelProperty(value = "创建时间")
     private Date createTime;
 
+    /**
+     * 更新时间
+     */
+    @ExcelProperty(value = "更新时间")
+    private Date updateTime;
 
 }

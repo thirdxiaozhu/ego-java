@@ -21,7 +21,7 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * 聊天消息Service业务层处理
+ * Ego推送Service业务层处理
  *
  * @author ageerle
  * @date 2025-04-08
@@ -33,7 +33,7 @@ public class EgoPushServiceImpl implements IEgoPushService {
     private final EgoPushMapper baseMapper;
 
     /**
-     * 查询聊天消息
+     * 查询推送消息
      */
     @Override
     public EgoPushVo queryById(Long id){
@@ -41,7 +41,7 @@ public class EgoPushServiceImpl implements IEgoPushService {
     }
 
     /**
-     * 查询聊天消息列表
+     * 查询推送消息列表
      */
     @Override
     public TableDataInfo<EgoPushVo> queryPageList(EgoPushBo bo, PageQuery pageQuery) {
@@ -58,7 +58,7 @@ public class EgoPushServiceImpl implements IEgoPushService {
     }
 
     /**
-     * 查询聊天消息列表
+     * 查询推送消息列表
      */
     @Override
     public List<EgoPushVo> queryList(EgoPushBo bo) {
@@ -70,15 +70,15 @@ public class EgoPushServiceImpl implements IEgoPushService {
         Map<String, Object> params = bo.getParams();
         LambdaQueryWrapper<EgoPush> lqw = Wrappers.lambdaQuery();
         lqw.eq(bo.getUserId() != null, EgoPush::getUserId, bo.getUserId());
-        lqw.eq(StringUtils.isNotBlank(bo.getContent()), EgoPush::getContent, bo.getContent());
-        lqw.eq(bo.getSessionId() != null, EgoPush::getSessionId, bo.getSessionId());
-        lqw.like(StringUtils.isNotBlank(bo.getRole()), EgoPush::getRole, bo.getRole());
-        lqw.like(StringUtils.isNotBlank(bo.getModelName()), EgoPush::getModelName, bo.getModelName());
+        lqw.like(StringUtils.isNotBlank(bo.getTitle()), EgoPush::getTitle, bo.getTitle());
+        lqw.like(StringUtils.isNotBlank(bo.getContent()), EgoPush::getContent, bo.getContent());
+        lqw.eq(StringUtils.isNotBlank(bo.getType()), EgoPush::getType, bo.getType());
+        lqw.eq(StringUtils.isNotBlank(bo.getStatus()), EgoPush::getStatus, bo.getStatus());
         return lqw;
     }
 
     /**
-     * 新增聊天消息
+     * 新增推送消息
      */
     @Override
     public Boolean insertByBo(EgoPushBo bo) {
@@ -92,7 +92,7 @@ public class EgoPushServiceImpl implements IEgoPushService {
     }
 
     /**
-     * 修改聊天消息
+     * 修改推送消息
      */
     @Override
     public Boolean updateByBo(EgoPushBo bo) {
@@ -109,7 +109,7 @@ public class EgoPushServiceImpl implements IEgoPushService {
     }
 
     /**
-     * 批量删除聊天消息
+     * 批量删除推送消息
      */
     @Override
     public Boolean deleteWithValidByIds(Collection<Long> ids, Boolean isValid) {

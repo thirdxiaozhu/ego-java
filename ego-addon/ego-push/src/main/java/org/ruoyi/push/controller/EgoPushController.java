@@ -23,7 +23,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 /**
- * 聊天消息
+ * Ego推送消息
  *
  * @author ageerle
  * @date 2025-04-08
@@ -37,7 +37,7 @@ public class EgoPushController extends BaseController {
     private final IEgoPushService egoPushService;
 
     /**
-     * 查询聊天消息列表
+     * 查询推送消息列表
      */
     @GetMapping("/list")
     public TableDataInfo<EgoPushVo> list(EgoPushBo bo, PageQuery pageQuery) {
@@ -45,17 +45,17 @@ public class EgoPushController extends BaseController {
     }
 
     /**
-     * 导出聊天消息列表
+     * 导出推送消息列表
      */
-    @Log(title = "聊天消息", businessType = BusinessType.EXPORT)
+    @Log(title = "推送消息", businessType = BusinessType.EXPORT)
     @PostMapping("/export")
     public void export(EgoPushBo bo, HttpServletResponse response) {
         List<EgoPushVo> list = egoPushService.queryList(bo);
-        ExcelUtil.exportExcel(list, "聊天消息", EgoPushVo.class, response);
+        ExcelUtil.exportExcel(list, "推送消息", EgoPushVo.class, response);
     }
 
     /**
-     * 获取聊天消息详细信息
+     * 获取推送消息详细信息
      *
      * @param id 主键
      */
@@ -67,20 +67,20 @@ public class EgoPushController extends BaseController {
 
 
     /**
-     * 新增聊天消息
+     * 新增推送消息
      */
-    @Log(title = "聊天消息", businessType = BusinessType.INSERT)
+    @Log(title = "推送消息", businessType = BusinessType.INSERT)
     @RepeatSubmit()
-    @PostMapping("/create")
+    @PostMapping()
     public R<Long> add(@Validated(AddGroup.class) @RequestBody EgoPushBo bo) {
         egoPushService.insertByBo(bo);
         return R.ok(bo.getId());
     }
 
     /**
-     * 修改聊天消息
+     * 修改推送消息
      */
-    @Log(title = "聊天消息", businessType = BusinessType.UPDATE)
+    @Log(title = "推送消息", businessType = BusinessType.UPDATE)
     @RepeatSubmit()
     @PutMapping()
     public R<Void> edit(@Validated(EditGroup.class) @RequestBody EgoPushBo bo) {
@@ -88,11 +88,11 @@ public class EgoPushController extends BaseController {
     }
 
     /**
-     * 删除聊天消息
+     * 删除推送消息
      *
      * @param ids 主键串
      */
-    @Log(title = "聊天消息", businessType = BusinessType.DELETE)
+    @Log(title = "推送消息", businessType = BusinessType.DELETE)
     @DeleteMapping("/{ids}")
     public R<Void> remove(@NotEmpty(message = "主键不能为空")
                           @PathVariable Long[] ids) {

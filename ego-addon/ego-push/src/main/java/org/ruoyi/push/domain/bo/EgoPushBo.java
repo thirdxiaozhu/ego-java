@@ -28,51 +28,37 @@ public class EgoPushBo extends BaseEntity {
     private Long id;
 
     /**
-     * 用户id
+     * 用户id（作者）
      */
-    @NotNull(message = "用户id不能为空", groups = { AddGroup.class, EditGroup.class })
+    @NotNull(message = "作者不能为空", groups = { AddGroup.class, EditGroup.class })
     private Long userId;
 
     /**
-     * 消息内容
+     * 推送内容（富文本）
      */
-    @NotBlank(message = "消息内容不能为空", groups = { AddGroup.class, EditGroup.class })
+    @NotBlank(message = "推送内容不能为空", groups = { AddGroup.class, EditGroup.class })
     private String content;
 
     /**
-     * 会话id
+     * 推送标题
      */
-    @NotBlank(message = "会话id不能为空", groups = { AddGroup.class, EditGroup.class })
-    private Long sessionId;
+    @NotBlank(message = "推送标题不能为空", groups = { AddGroup.class, EditGroup.class })
+    private String title;
 
     /**
-     * 对话角色
+     * 推送类型
      */
-    @NotBlank(message = "对话角色不能为空", groups = { AddGroup.class, EditGroup.class })
-    private String role;
+    @NotBlank(message = "推送类型不能为空", groups = { AddGroup.class, EditGroup.class })
+    private String type;
 
     /**
-     * 扣除金额
+     * 状态（0正常 1停用）
      */
-    @NotNull(message = "扣除金额不能为空", groups = { AddGroup.class, EditGroup.class })
-    private Double deductCost;
-
-    /**
-     * 累计 Tokens
-     */
-    @NotNull(message = "累计 Tokens不能为空", groups = { AddGroup.class, EditGroup.class })
-    private Integer totalTokens;
-
-    /**
-     * 模型名称
-     */
-    @NotBlank(message = "模型名称不能为空", groups = { AddGroup.class, EditGroup.class })
-    private String modelName;
+    private String status;
 
     /**
      * 备注
      */
-    @NotBlank(message = "备注不能为空", groups = { AddGroup.class, EditGroup.class })
     private String remark;
 
 
