@@ -4,83 +4,54 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <parent>
-        <artifactId>ruoyi-ai</artifactId>
+        <artifactId>ego-addon</artifactId>
         <groupId>org.ruoyi</groupId>
         <version>${revision}</version>
         <relativePath>../pom.xml</relativePath>
     </parent>
 
-    <artifactId>ruoyi-modules-api</artifactId>
-    <packaging>pom</packaging>
-
-    <modules>
-        <module>ruoyi-chat-api</module>
-        <module>ruoyi-knowledge-api</module>
-        <module>ruoyi-system-api</module>
-<!--        <module>ruoyi-ego-api</module>-->
-    </modules>
+    <artifactId>ego-push</artifactId>
 
     <properties>
         <maven.compiler.source>17</maven.compiler.source>
         <maven.compiler.target>17</maven.compiler.target>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     </properties>
-
     <dependencies>
-        <!-- 系统核心模块 -->
+        <dependency>
+            <groupId>jakarta.servlet</groupId>
+            <artifactId>jakarta.servlet-api</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.jetbrains</groupId>
+            <artifactId>annotations</artifactId>
+            <version>26.0.2</version>
+            <scope>compile</scope>
+        </dependency>
         <dependency>
             <groupId>org.ruoyi</groupId>
             <artifactId>ruoyi-common-core</artifactId>
         </dependency>
-
-        <!-- mybaits基础模块 -->
-        <dependency>
-            <groupId>org.ruoyi</groupId>
-            <artifactId>ruoyi-common-mybatis</artifactId>
-        </dependency>
-
-        <!-- 脱敏模块 -->
-        <dependency>
-            <groupId>org.ruoyi</groupId>
-            <artifactId>ruoyi-common-sensitive</artifactId>
-        </dependency>
-
-        <!-- excel模块-->
-        <dependency>
-            <groupId>org.ruoyi</groupId>
-            <artifactId>ruoyi-common-excel</artifactId>
-        </dependency>
-
-        <!-- 租户基础模块 -->
-        <dependency>
-            <groupId>org.ruoyi</groupId>
-            <artifactId>ruoyi-common-tenant</artifactId>
-        </dependency>
-
-        <!-- 字段翻译基础模块 -->
-        <dependency>
-            <groupId>org.ruoyi</groupId>
-            <artifactId>ruoyi-common-translation</artifactId>
-        </dependency>
-
-        <!-- 系统日志模块 -->
         <dependency>
             <groupId>org.ruoyi</groupId>
             <artifactId>ruoyi-common-log</artifactId>
         </dependency>
-
-        <!-- 对象存储模块 -->
         <dependency>
             <groupId>org.ruoyi</groupId>
-            <artifactId>ruoyi-common-oss</artifactId>
+            <artifactId>ruoyi-common-web</artifactId>
         </dependency>
-
         <dependency>
-            <groupId>mysql</groupId>
-            <artifactId>mysql-connector-java</artifactId>
+            <groupId>org.ruoyi</groupId>
+            <artifactId>ruoyi-common-mybatis</artifactId>
         </dependency>
-
-
+        <dependency>
+            <groupId>org.ruoyi</groupId>
+            <artifactId>ruoyi-common-excel</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.ruoyi</groupId>
+            <artifactId>ruoyi-common-idempotent</artifactId>
+        </dependency>
     </dependencies>
 
 </project>

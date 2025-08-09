@@ -1,0 +1,73 @@
+package org.ruoyi.push.domain;
+
+import com.baomidou.mybatisplus.annotation.TableId;
+import com.baomidou.mybatisplus.annotation.TableName;
+import lombok.Data;
+import lombok.EqualsAndHashCode;
+import org.ruoyi.core.domain.BaseEntity;
+
+import java.io.Serial;
+import java.math.BigDecimal;
+
+/**
+ * Ego推送 ego_push
+ *
+ * @author ageerle
+ * @date 2025-04-08
+ */
+@Data
+@EqualsAndHashCode(callSuper = true)
+@TableName("chat_message")
+public class EgoPush extends BaseEntity {
+
+    @Serial
+    private static final long serialVersionUID = 1L;
+
+    /**
+     * 主键
+     */
+    @TableId(value = "id")
+    private Long id;
+
+    /**
+     * 用户id
+     */
+    private Long userId;
+
+    /**
+     * 会话id
+     */
+    private Long sessionId;
+
+    /**
+     * 消息内容
+     */
+    private String content;
+
+    /**
+     * 对话角色
+     */
+    private String role;
+
+    /**
+     * 扣除金额
+     */
+    private BigDecimal deductCost;
+
+    /**
+     * 累计 Tokens
+     */
+    private Long totalTokens;
+
+    /**
+     * 模型名称
+     */
+    private String modelName;
+
+    /**
+     * 备注
+     */
+    private String remark;
+
+
+}

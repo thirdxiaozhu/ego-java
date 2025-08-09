@@ -3,7 +3,6 @@ package org.ruoyi.chat.controller.chat;
 import cn.dev33.satoken.annotation.SaCheckPermission;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.constraints.NotEmpty;
-import jakarta.validation.constraints.NotNull;
 import lombok.RequiredArgsConstructor;
 import org.ruoyi.common.core.domain.R;
 import org.ruoyi.common.core.service.ConfigService;
@@ -20,6 +19,7 @@ import org.ruoyi.system.domain.vo.ChatConfigVo;
 import org.ruoyi.system.service.IChatConfigService;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+import jakarta.validation.constraints.NotNull;
 
 import java.util.List;
 

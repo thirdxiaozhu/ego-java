@@ -302,6 +302,12 @@
                 <version>${revision}</version>
             </dependency>
 
+            <dependency>
+                <groupId>org.ruoyi</groupId>
+                <artifactId>ego-push</artifactId>
+                <version>${revision}</version>
+            </dependency>
+
 
             <dependency>
                 <groupId>org.ruoyi</groupId>
@@ -320,6 +326,12 @@
                 <artifactId>ruoyi-chat-api</artifactId>
                 <version>${revision}</version>
             </dependency>
+
+<!--            <dependency>-->
+<!--                <groupId>org.ruoyi</groupId>-->
+<!--                <artifactId>ego-addon</artifactId>-->
+<!--                <version>${revision}</version>-->
+<!--            </dependency>-->
 
             <dependency>
                 <groupId>org.ruoyi</groupId>
