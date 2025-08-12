@@ -64,6 +64,12 @@ public class SSEEventSourceListener extends EventSourceListener {
      */
     @Override
     public void onOpen(EventSource eventSource, Response response) {
+        if(!chatCostService.hasBalance(userId)){
+            log.info("用户无余额...");
+            emitter.complete();
+            eventSource.cancel();
+            return;
+        }
         log.info("OpenAI建立sse连接...");
     }
 
@@ -105,9 +111,6 @@ public class SSEEventSourceListener extends EventSourceListener {
                 }
                 stringBuffer.append(content);
             }
-//            if(reasoningContent != null){
-//                log.info("reasoningContent: {}", reasoningContent);
-//            }
             // for both reasoning or normal chat
             emitter.send(data);
         } catch (Exception e) {

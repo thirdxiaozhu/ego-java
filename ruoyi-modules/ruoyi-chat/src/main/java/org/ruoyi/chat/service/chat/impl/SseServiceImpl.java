@@ -74,6 +74,16 @@ public class SseServiceImpl implements ISseService {
     @Override
     public SseEmitter sseChat(ChatRequest chatRequest, HttpServletRequest request) {
         SseEmitter sseEmitter = new SseEmitter(0L);
+        if(!chatCostService.hasBalance()){
+            try {
+                sseEmitter.send(SseEmitter.event().name("error").data("用户余额不足"));
+                sseEmitter.complete();
+            } catch (Exception e) {
+                log.error("发送余额不足错误信息失败", e);
+            }
+            return sseEmitter;
+        }
+
         try {
             // 构建消息列表
             buildChatMessageList(chatRequest);

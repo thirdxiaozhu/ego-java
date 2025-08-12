@@ -141,6 +141,24 @@ public class ChatCostServiceImpl implements IChatCostService {
         System.out.println("----------------------------------------");
     }
 
+    @Override
+    public Boolean hasBalance() {
+        SysUser sysUser = sysUserMapper.selectById(this.getUserId());
+        if (sysUser == null || sysUser.getUserBalance() == 0) {
+            return Boolean.FALSE;
+        }
+        return Boolean.TRUE;
+    }
+
+    @Override
+    public Boolean hasBalance(Long userId) {
+        SysUser sysUser = sysUserMapper.selectById(userId);
+        if (sysUser == null || sysUser.getUserBalance() == 0) {
+            return Boolean.FALSE;
+        }
+        return Boolean.TRUE;
+    }
+
     /**
      * 从用户余额中扣除费用
      *

@@ -30,6 +30,9 @@ public class BaseChatCompletion implements Serializable {
     @Builder.Default
     private String model = GPT_3_5_TURBO.getName();
 
+    @JsonProperty("enable_thinking")
+    private Boolean enableThinking;
+
     /**
      * 指定模型必须输出的格式的对象。
      *

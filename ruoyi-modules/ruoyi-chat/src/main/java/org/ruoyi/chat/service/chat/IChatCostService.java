@@ -25,6 +25,20 @@ public interface IChatCostService {
      */
     void deductUserBalance(Long userId, Double numberCost);
 
+    /**
+     * 判断用户是否余额
+     *
+     * @return 结果
+     */
+    Boolean hasBalance();
+
+    /**
+     * 判断用户是否余额
+     *
+     * @return 结果
+     */
+    Boolean hasBalance(Long userId);
+
 
     /**
      * 扣除任务费用并且保存记录

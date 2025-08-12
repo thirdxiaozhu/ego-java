@@ -31,49 +31,9 @@ public class DeepSeekChatImpl  implements IChatService {
 
     @Override
     public SseEmitter chat(ChatRequest chatRequest, SseEmitter emitter) {
-//        ChatModelVo chatModelVo = chatModelService.selectModelByName(chatRequest.getModel());
-//        StreamingChatModel chatModel = OpenAiStreamingChatModel.builder()
-//                .baseUrl(chatModelVo.getApiHost())
-//                .apiKey(chatModelVo.getApiKey())
-//                .modelName(chatModelVo.getModelName())
-//                .logRequests(true)
-//                .logResponses(true)
-//                .temperature(0.8)
-//                .build();
-//
-//        // 发送流式消息
-//        try {
-//            chatModel.chat(chatRequest.getPrompt(), new StreamingChatResponseHandler() {
-//                @SneakyThrows
-//                @Override
-//                public void onPartialResponse(String partialResponse) {
-//                    emitter.send(partialResponse);
-//                    log.info("收到消息片段: {}", partialResponse);
-////                    System.out.print(partialResponse);
-//                }
-//
-//                @Override
-//                public void onCompleteResponse(ChatResponse completeResponse) {
-//                    emitter.complete();
-//                    log.info("消息结束，完整消息ID: {}", completeResponse);
-//                }
-//
-//                @Override
-//                public void onError(Throwable error) {
-//                    System.err.println("错误: " + error.getMessage());
-//                }
-//            });
-//
-//        } catch (Exception e) {
-//            log.error("deepseek请求失败：{}", e.getMessage());
-//        }
-
         ChatModelVo chatModelVo = chatModelService.selectModelByName(chatRequest.getModel());
         OpenAiStreamClient openAiStreamClient = ChatConfig.createOpenAiStreamClient(chatModelVo.getApiHost(), chatModelVo.getApiKey());
         List<Message> messages = chatRequest.getMessages();
-//        for(Message msg : messages){
-//            log.warn("}}}}}} {}", msg.getRole());
-//        }
         String token = StpUtil.getTokenValue();
         SSEEventSourceListener listener = new SSEEventSourceListener(emitter,chatRequest.getUserId(),chatRequest.getSessionId(), token);
         ChatCompletion completion = ChatCompletion
