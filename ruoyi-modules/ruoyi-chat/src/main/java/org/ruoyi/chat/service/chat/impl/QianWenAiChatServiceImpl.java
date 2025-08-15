@@ -7,8 +7,12 @@ import com.alibaba.dashscope.aigc.conversation.ConversationResult;
 import com.alibaba.dashscope.aigc.generation.Generation;
 import com.alibaba.dashscope.aigc.generation.GenerationParam;
 import com.alibaba.dashscope.aigc.generation.GenerationResult;
+import com.alibaba.dashscope.aigc.multimodalconversation.MultiModalConversation;
+import com.alibaba.dashscope.aigc.multimodalconversation.MultiModalConversationParam;
+import com.alibaba.dashscope.aigc.multimodalconversation.MultiModalConversationResult;
 import com.alibaba.dashscope.common.Message;
 import com.alibaba.dashscope.common.MultiModalMessage;
+import com.alibaba.dashscope.exception.UploadFileException;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import dev.langchain4j.community.model.dashscope.QwenChatRequestParameters;
 import dev.langchain4j.community.model.dashscope.QwenStreamingChatModel;
@@ -27,8 +31,10 @@ import org.ruoyi.chat.service.chat.IChatService;
 import org.ruoyi.common.chat.entity.chat.ChatCompletion;
 //import org.ruoyi.common.chat.entity.chat.Message as RuoyiMessage;
 import org.ruoyi.common.chat.entity.chat.ChatCompletionResponse;
+import org.ruoyi.common.chat.entity.chat.Content;
 import org.ruoyi.common.chat.openai.OpenAiStreamClient;
 import org.ruoyi.common.chat.request.ChatRequest;
+import org.ruoyi.common.core.exception.base.BaseException;
 import org.ruoyi.common.core.service.BaseContext;
 import org.ruoyi.common.core.utils.JsonUtils;
 import org.ruoyi.common.core.utils.StringUtils;
@@ -45,10 +51,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
 
 
 /**
@@ -87,22 +90,61 @@ public class QianWenAiChatServiceImpl  implements IChatService {
             String content = message.getOutput().getChoices().get(0).getMessage().getContent();
             String reasoningContent = message.getOutput().getChoices().get(0).getMessage().getReasoningContent();
 
-            log.info("Content: {}", content);
-            log.info("ReasioningContent: {}", reasoningContent);
-
             if(content != null ){
                 stringBuffer.append(content);
             }
-            emitter.send(Objects.requireNonNull(JsonUtils.toJson(message)));
+            ObjectMapper mapper = new ObjectMapper();
+            String jsonString = mapper.writeValueAsString(message);
+            emitter.send(Objects.requireNonNull(jsonString));
+            log.info(Objects.requireNonNull(jsonString));
         } catch (Exception e) {
             log.error(e.getMessage(), e);
         }
     }
-    private void streamCallWithMessage(Generation gen)
+
+    private void handleMultiModalResult(MultiModalConversationResult message) throws IOException {
+//        System.out.println(JsonUtils.toJson(message));
+        try {
+            if(!message.getOutput().getChoices().get(0).getFinishReason().equals("null")){
+                emitter.complete();
+                ChatRequest chatRequest = new ChatRequest();
+                chatRequest.setRole(org.ruoyi.common.chat.entity.chat.Message.Role.ASSISTANT.getName());
+                chatRequest.setModel(request.getModel());
+                chatRequest.setUserId(request.getUserId());
+                chatRequest.setSessionId(request.getSessionId());
+                chatRequest.setPrompt(stringBuffer.toString());
+                // 记录会话token
+                BaseContext.setCurrentToken(StpUtil.getTokenValue());
+                chatCostService.deductToken(chatRequest);
+                return;
+            }
+
+//            String content = message.getOutput().getChoices().get(0).getMessage().getContent();
+//            String reasoningContent = message.getOutput().getChoices().get(0).getMessage().getReasoningContent();
+//
+//            if(content != null ){
+//                stringBuffer.append(content);
+//            }
+            ObjectMapper mapper = new ObjectMapper();
+            String jsonString = mapper.writeValueAsString(message);
+            emitter.send(Objects.requireNonNull(jsonString));
+            log.info(Objects.requireNonNull(jsonString));
+        } catch (Exception e) {
+            log.error(e.getMessage(), e);
+        }
+    }
+    private void streamCallWithMessage()
             throws NoApiKeyException, ApiException, InputRequiredException {
+
+        Generation gen = new Generation();
         GenerationParam param = buildGenerationParam(request);
         Flowable<GenerationResult> result = gen.streamCall(param);
-        result.blockingForEach(message -> handleGenerationResult(message));
+//        result.blockingForEach(message -> handleGenerationResult(message));
+        result.subscribe(message -> handleGenerationResult(message));
+        // 当完成时关闭 SseEmitter
+        emitter.onCompletion(() -> {
+            System.out.println("SSE 连接已完成，正在关闭.");
+        });
     }
     private GenerationParam buildGenerationParam(ChatRequest request) {
         ChatModelVo chatModelVo = chatModelService.selectModelByName(request.getModel());
@@ -131,38 +173,66 @@ public class QianWenAiChatServiceImpl  implements IChatService {
                 .build();
     }
 
+    public  void simpleMultiModalConversationCall()
+            throws ApiException, NoApiKeyException, UploadFileException {
+        ChatModelVo chatModelVo = chatModelService.selectModelByName(request.getModel());
+
+        Object content =  request.getMessages().get(request.getMessages().size()-1).getContent();
+
+        if(content instanceof ArrayList<?> listContent){
+            for(Object obj: listContent){
+                Content
+                log.warn("+++++++++++++++++++++++++++++ {}", obj.getClass().toString());
+            }
+        }else {
+            throw new BaseException("请检查你的输入参数");
+        }
+
+
+
+        MultiModalConversation conv = new MultiModalConversation();
+        MultiModalMessage userMessage = MultiModalMessage.builder().role(Role.USER.getValue())
+                .content(Arrays.asList(
+                        Collections.singletonMap("image", "https://dashscope.oss-cn-beijing.aliyuncs.com/images/dog_and_girl.jpeg"),
+                        Collections.singletonMap("image", "https://dashscope.oss-cn-beijing.aliyuncs.com/images/tiger.png"),
+                        Collections.singletonMap("image", "https://dashscope.oss-cn-beijing.aliyuncs.com/images/rabbit.png"),
+                        Collections.singletonMap("text", "这些是什么?"))).build();
+        MultiModalConversationParam param = MultiModalConversationParam.builder()
+                // 若没有配置环境变量，请用百炼API Key将下行替换为：.apiKey("sk-xxx")
+                .apiKey(chatModelVo.getApiKey())
+                // 此处以qwen-vl-plus为例，可按需更换模型名称。模型列表：https://help.aliyun.com/zh/model-studio/getting-started/models
+                .model("qwen-vl-plus")
+                .message(userMessage)
+                .build();
+
+        Flowable<MultiModalConversationResult> result = conv.streamCall(param);
+        result.subscribe(message -> handleMultiModalResult(message));
+        // 当完成时关闭 SseEmitter
+        emitter.onCompletion(() -> {
+            System.out.println("SSE 连接已完成，正在关闭.");
+        });
+    }
+
+
     @Override
     public SseEmitter chat(ChatRequest chatRequest, SseEmitter emitter) {
-
         this.emitter = emitter;
         this.request = chatRequest;
         try {
-            Generation gen = new Generation();
-            streamCallWithMessage(gen);
+            // 获取最后一条消息,判断是否为多模态
+            org.ruoyi.common.chat.entity.chat.Message msg = chatRequest.getMessages().get(chatRequest.getMessages().size()-1);
+            if(msg.getContent().getClass() == String.class){
+                streamCallWithMessage();
+            }else {
+                simpleMultiModalConversationCall();
+            }
         } catch (ApiException | NoApiKeyException | InputRequiredException  e) {
             log.error("An exception occurred: {}", e.getMessage());
+        } catch (UploadFileException e) {
+            throw new RuntimeException(e);
         }
         return emitter;
     }
-
-//    @Override
-//    public SseEmitter chat(ChatRequest chatRequest, SseEmitter emitter) {
-//        ChatModelVo chatModelVo = chatModelService.selectModelByName(chatRequest.getModel());
-//        OpenAiStreamClient openAiStreamClient = ChatConfig.createOpenAiStreamClient(chatModelVo.getApiHost(), chatModelVo.getApiKey());
-//        List<Message> messages = chatRequest.getMessages();
-//        String token = StpUtil.getTokenValue();
-//        SSEEventSourceListener listener = new SSEEventSourceListener(emitter,chatRequest.getUserId(),chatRequest.getSessionId(), token);
-//        ChatCompletion completion = ChatCompletion
-//                .builder()
-//                .messages(messages)
-//                .model(chatRequest.getModel())
-//                .stream(true)
-//                .enableThinking(true)
-//                .build();
-//        openAiStreamClient.streamChatCompletion(completion, listener);
-//        return emitter;
-//
-//    }
 
     @Override
     public String getCategory() {
