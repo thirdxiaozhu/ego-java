@@ -22,6 +22,8 @@ import org.ruoyi.service.IChatSessionService;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
+import lombok.extern.slf4j.Slf4j;
+
 import java.util.List;
 
 /**
@@ -30,6 +32,7 @@ import java.util.List;
  * @author ageerle
  * @date 2025-05-03
  */
+@Slf4j
 @Validated
 @RequiredArgsConstructor
 @RestController
@@ -79,10 +82,10 @@ public class ChatSessionController extends BaseController {
     @Log(title = "会话管理", businessType = BusinessType.INSERT)
     @RepeatSubmit()
     @PostMapping()
-    public R<Long> add(@Validated(AddGroup.class) @RequestBody ChatSessionBo bo) {
+    public R<ChatSessionVo> add(@Validated(AddGroup.class) @RequestBody ChatSessionBo bo) {
         chatSessionService.insertByBo(bo);
         // 返回会话id
-        return R.ok(bo.getId());
+        return R.ok(chatSessionService.queryById(bo.getId()));
     }
 
     /**

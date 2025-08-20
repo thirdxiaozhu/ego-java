@@ -40,7 +40,6 @@ public class ChatController {
     @ResponseBody
     public SseEmitter sseChat(@RequestBody @Valid ChatRequest chatRequest, HttpServletRequest request) {
         return sseService.sseChat(chatRequest,request);
-
     }
 
     /**

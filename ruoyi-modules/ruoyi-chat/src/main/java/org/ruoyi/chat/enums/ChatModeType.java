@@ -13,7 +13,7 @@ public enum ChatModeType {
 
     DEEPSEEK("deepseek", "深度求索"),
 
-    QIANWEN("qianwen", "通义千问"),
+    QIANWEN("qwen", "通义千问"),
 
     VECTOR("vector", "知识库向量模型"),
 

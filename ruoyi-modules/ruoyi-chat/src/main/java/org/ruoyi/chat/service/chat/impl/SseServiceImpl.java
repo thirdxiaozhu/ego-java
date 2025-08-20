@@ -25,6 +25,7 @@ import org.ruoyi.domain.bo.ChatSessionBo;
 import org.ruoyi.domain.bo.QueryVectorBo;
 import org.ruoyi.domain.vo.ChatModelVo;
 import org.ruoyi.domain.vo.KnowledgeInfoVo;
+import org.ruoyi.mapper.ChatSessionMapper;
 import org.ruoyi.service.IChatModelService;
 import org.ruoyi.service.IChatSessionService;
 import org.ruoyi.service.IKnowledgeInfoService;
@@ -68,8 +69,10 @@ public class SseServiceImpl implements ISseService {
 
     private final IKnowledgeInfoService knowledgeInfoService;
 
+
     private ChatModelVo chatModelVo;
 
+    // TODO: 未来参数要携带简易智能体Id，并将ID对应的智能体prompt作为每轮对话的systemprompt
 
     @Override
     public SseEmitter sseChat(ChatRequest chatRequest, HttpServletRequest request) {
@@ -85,37 +88,17 @@ public class SseServiceImpl implements ISseService {
         }
 
         try {
+            chatModelVo = chatModelService.selectModelByName(chatRequest.getModel());
             // 构建消息列表
             buildChatMessageList(chatRequest);
             // 设置对话角色
             chatRequest.setRole(Message.Role.USER.getName());
 
-
             if(LoginHelper.isLogin()){
-
 				// 设置用户id
                 chatRequest.setUserId(LoginHelper.getUserId());
 
-
-                //待优化的地方 （这里请前端提交send的时候传递uuid进来或者sessionId）
-                //待优化的地方 （这里请前端提交send的时候传递uuid进来或者sessionId）
-                //待优化的地方 （这里请前端提交send的时候传递uuid进来或者sessionId）
-                {
-                    // 设置会话id
-                    if (chatRequest.getUuid() == null){
-                        //暂时随机生成会话id
-                        chatRequest.setSessionId(System.currentTimeMillis());
-                    }else{
-                        //这里或许需要修改一下，这里应该用uuid 或者 前端传递 sessionId
-                        chatRequest.setSessionId(chatRequest.getUuid());
-                    }
-                }
-
-
-                // 保存消息记录 并扣除费用
-                chatCostService.deductToken(chatRequest);
-                chatRequest.setUserId(chatCostService.getUserId());
-                if(chatRequest.getSessionId()==null){
+                if(chatRequest.getSessionId() == null || chatRequest.getSessionId() == 0){
                     ChatSessionBo chatSessionBo = new ChatSessionBo();
                     chatSessionBo.setUserId(chatCostService.getUserId());
                     chatSessionBo.setSessionTitle(getFirst10Characters(chatRequest.getPrompt()));
@@ -123,6 +106,10 @@ public class SseServiceImpl implements ISseService {
                     chatSessionService.insertByBo(chatSessionBo);
                     chatRequest.setSessionId(chatSessionBo.getId());
                 }
+
+                // 保存消息记录 并扣除费用
+                chatCostService.deductToken(chatRequest);
+                chatRequest.setUserId(chatCostService.getUserId());
             }
             // 根据模型分类调用不同的处理逻辑
             IChatService chatService = chatServiceFactory.getChatService(chatModelVo.getCategory());
@@ -153,19 +140,10 @@ public class SseServiceImpl implements ISseService {
 
     /**
      *  构建消息列表
+     *  TODO: 智能体ID
      */
     private void buildChatMessageList(ChatRequest chatRequest){
         String sysPrompt;
-        // 矫正模型名称 如果是gpt-image 则查询image类型模型 获取模型名称
-        if(chatRequest.getModel().equals("gpt-image")) {
-            chatModelVo = chatModelService.selectModelByCategory("image");
-            if (chatModelVo == null) {
-                log.error("未找到image类型的模型配置");
-                throw new IllegalStateException("未找到image类型的模型配置");
-            }
-        }else{
-            chatModelVo = chatModelService.selectModelByName(chatRequest.getModel());
-        }
         // 获取对话消息列表
         List<Message> messages = chatRequest.getMessages();
         // 查询向量库相关信息加入到上下文
@@ -205,7 +183,7 @@ public class SseServiceImpl implements ISseService {
         }else {
             sysPrompt = chatModelVo.getSystemPrompt();
             if(StringUtils.isEmpty(sysPrompt)){
-                sysPrompt ="注意：回复之前注意结合上下文和工具返回内容进行回复。";
+                sysPrompt ="你是一个智能知识助手，请根据上下文进行准确的回答。\n";
             }
         }
         // 设置系统默认提示词
@@ -213,6 +191,9 @@ public class SseServiceImpl implements ISseService {
         messages.add(0,sysMessage);
 
         chatRequest.setSysPrompt(sysPrompt);
+
+
+        /// /////// TODO: 预备弃用
         // 用户对话内容
         String chatString = null;
         // 获取用户对话信息

@@ -14,6 +14,16 @@ public interface IChatCostService {
      * 扣除余额并且保存记录
      *
      * @param chatRequest 对话信息
+     * @param tokens 扣除的token数
+     * @return 结果
+     */
+
+    void deductToken(ChatRequest chatRequest, int tokens);
+
+    /**
+     * 扣除余额并且保存记录
+     *
+     * @param chatRequest 对话信息
      * @return 结果
      */
 

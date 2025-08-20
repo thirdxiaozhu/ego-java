@@ -42,21 +42,27 @@ public class ChatCostServiceImpl implements IChatCostService {
 
     private final IChatModelService chatModelService;
 
-    /**
-     * 扣除用户余额
-     */
+
+    @Override
+    public void deductToken(ChatRequest chatRequest, int tokens) {
+        deduct(chatRequest, tokens);
+    }
+
     @Override
     public void deductToken(ChatRequest chatRequest) {
+        int tokens = TikTokensUtil.tokens(chatRequest.getModel(), chatRequest.getPrompt());
+        deduct(chatRequest, tokens);
+    }
 
 
+    public void deduct(ChatRequest chatRequest, int tokens) {
         if(chatRequest.getUserId()==null || chatRequest.getSessionId()==null){
             return;
         }
 
+        log.warn("~~~~~~~~~~~~~~~~~~ {}  {}", chatRequest.getModel(), chatRequest.getPrompt());
 
-        int tokens = TikTokensUtil.tokens(chatRequest.getModel(), chatRequest.getPrompt());
-
-        System.out.println("deductToken->本次提交token数       : "+tokens);
+        log.info("deductToken->本次提交token数 :{} ", tokens);
 
         String modelName = chatRequest.getModel();
 
@@ -64,6 +70,7 @@ public class ChatCostServiceImpl implements IChatCostService {
 
         // 设置用户id
         chatMessageBo.setUserId(chatRequest.getUserId());
+
         // 设置会话id
         chatMessageBo.setSessionId(chatRequest.getSessionId());
 
@@ -91,8 +98,8 @@ public class ChatCostServiceImpl implements IChatCostService {
         //当前未付费token
         int token = chatToken.getToken();
 
-        System.out.println("deductToken->未付费的token数       : "+token);
-        System.out.println("deductToken->本次提交+未付费token数 : "+totalTokens);
+        log.warn("deductToken->未付费的token数       {}: ", token);
+        log.warn("deductToken->本次提交+未付费token数 {}: ", totalTokens);
 
 
         //扣费核心逻辑（总token大于100就要对未结清的token进行扣费）
@@ -107,8 +114,8 @@ public class ChatCostServiceImpl implements IChatCostService {
             }else {
                 // 按token扣费
                 Double numberCost = totalTokens * cost;
-                System.out.println("deductToken->按token扣费 计算token数量: "+totalTokens);
-                System.out.println("deductToken->按token扣费 每token的价格: "+cost);
+                log.warn("deductToken->按token扣费 计算token数量: {}", totalTokens);
+                log.warn("deductToken->按token扣费 每token的价格: {}", cost);
 
                 deductUserBalance(chatMessageBo.getUserId(), numberCost);
                 chatMessageBo.setDeductCost(numberCost);
@@ -119,15 +126,12 @@ public class ChatCostServiceImpl implements IChatCostService {
                 chatToken.setToken(0);//因为判断大于100token直接全部计算扣除了所以这里直接=0就可以了
                 chatTokenService.editToken(chatToken);
             }
-
-
-
         } else {
-            //不满100Token,不需要进行扣费啊啊啊
+            //不满100Token,不需要进行扣费
             //deductUserBalance(chatMessageBo.getUserId(), 0.0);
             chatMessageBo.setDeductCost(0d);
             chatMessageBo.setRemark("不满100Token,计入下一次!");
-            System.out.println("deductToken->不满100Token,计入下一次!");
+            log.warn("deductToken->不满100Token,计入下一次!");
             chatToken.setToken(totalTokens);
             chatToken.setModelName(chatMessageBo.getModelName());
             chatToken.setUserId(chatMessageBo.getUserId());
@@ -137,8 +141,8 @@ public class ChatCostServiceImpl implements IChatCostService {
         // 保存消息记录
         chatMessageService.insertByBo(chatMessageBo);
 
-        System.out.println("deductToken->chatMessageService.insertByBo(: "+chatMessageBo);
-        System.out.println("----------------------------------------");
+        log.info("deductToken->chatMessageService.insertByBo {} ", chatMessageBo);
+        log.info("----------------------------------------");
     }
 
     @Override
@@ -174,8 +178,8 @@ public class ChatCostServiceImpl implements IChatCostService {
         }
 
         Double userBalance = sysUser.getUserBalance();
-        System.out.println("deductUserBalance->准备扣除：numberCost: "+numberCost);
-        System.out.println("deductUserBalance->剩余金额：userBalance: "+userBalance);
+        log.warn("deductUserBalance->准备扣除：numberCost: {}", numberCost);
+        log.warn("deductUserBalance->剩余金额：userBalance:{}", userBalance);
 
         double newBalance = Math.max(userBalance - numberCost, 0);
 
@@ -184,7 +188,7 @@ public class ChatCostServiceImpl implements IChatCostService {
                         .set(SysUser::getUserBalance, newBalance)
                         .eq(SysUser::getUserId, userId));
 
-        if (userBalance < numberCost) {
+        if (userBalance == 0 || userBalance < numberCost) {
             throw new ServiceException("余额不足, 请充值");
         }
 

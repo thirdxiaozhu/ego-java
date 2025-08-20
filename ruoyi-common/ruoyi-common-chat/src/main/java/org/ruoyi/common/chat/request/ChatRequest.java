@@ -1,5 +1,6 @@
 package org.ruoyi.common.chat.request;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.validation.constraints.NotEmpty;
 import lombok.Data;
 import org.ruoyi.common.chat.entity.chat.Message;
@@ -22,7 +23,7 @@ public class ChatRequest {
     private String model;
 
     /**
-     * 提示词
+     * 提示词(将弃用)
      */
     private String prompt;
 
@@ -62,9 +63,9 @@ public class ChatRequest {
     private String role;
 
 
-    /**
-     * 对话id(每个聊天窗口都不一样)
-     */
-    private Long uuid;
-
+//    /**
+//     * 对话id(每个聊天窗口都不一样)
+//     */
+//    private Long uuid;
+//
 }
