@@ -73,9 +73,15 @@ public class ChatMessageController extends BaseController {
      */
     @GetMapping("/listForUniapp")
     public TableDataInfo<ChatMessageVo> list(ChatMessageForUniappBo uniappBo, PageQuery pageQuery) {
-        ChatMessageBo bo = new ChatMessageBo();
-        bo.setUserId(uniappBo.getUserId());
-        bo.setSessionId(Long.parseLong(uniappBo.getUserId().toString() + "2024"));
+//        ChatMessageBo bo = new ChatMessageBo();
+//        bo.setUserId(uniappBo.getUserId());
+//        bo.setSessionId(Long.parseLong(uniappBo.getUserId().toString() + "2024"));
+//
+
+        ChatMessageBo bo = ChatMessageBo.builder()
+                .userId(uniappBo.getUserId())
+                .sessionId(Long.parseLong(uniappBo.getUserId().toString() + "2024")).build();
+
         return chatMessageService.queryPageList(bo, pageQuery);
     }
 
@@ -87,12 +93,17 @@ public class ChatMessageController extends BaseController {
     @RepeatSubmit()
     @PostMapping("/addForUniapp")
     public R<Long> addForUniapp(@Validated(AddGroup.class) @RequestBody ChatMessageForUniappBo uniappBo) {
-        ChatMessageBo bo = new ChatMessageBo();
-        bo.setUserId(uniappBo.getUserId());
-        bo.setRole(uniappBo.getRole());
-        bo.setContent(uniappBo.getContent());
-        bo.setSessionId(Long.parseLong(uniappBo.getUserId().toString() + "2024"));
-        chatMessageService.insertByBo(bo);
+//        ChatMessageBo bo = new ChatMessageBo();
+//        bo.setUserId(uniappBo.getUserId());
+//        bo.setRole(uniappBo.getRole());
+//        bo.setContent(uniappBo.getContent());
+//        bo.setSessionId(Long.parseLong(uniappBo.getUserId().toString() + "2024"));
+        chatMessageService.insertByBo(ChatMessageBo.builder()
+                        .userId(uniappBo.getUserId())
+                        .role(uniappBo.getRole())
+                        .content(uniappBo.getContent())
+                        .sessionId(Long.parseLong(uniappBo.getUserId().toString() + "2024"))
+                .build());
         return R.ok(uniappBo.getId());
     }
 

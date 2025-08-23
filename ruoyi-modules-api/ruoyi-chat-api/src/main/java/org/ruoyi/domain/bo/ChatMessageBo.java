@@ -3,6 +3,7 @@ package org.ruoyi.domain.bo;
 import io.github.linpeilie.annotations.AutoMapper;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
+import lombok.Builder;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import org.ruoyi.common.core.validate.AddGroup;
@@ -19,6 +20,7 @@ import org.ruoyi.domain.ChatMessage;
 @Data
 @EqualsAndHashCode(callSuper = true)
 @AutoMapper(target = ChatMessage.class, reverseConvertGenerate = false)
+@Builder
 public class ChatMessageBo extends BaseEntity {
 
     /**

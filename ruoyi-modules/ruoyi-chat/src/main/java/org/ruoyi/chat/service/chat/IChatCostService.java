@@ -1,6 +1,7 @@
 package org.ruoyi.chat.service.chat;
 
 import org.ruoyi.common.chat.request.ChatRequest;
+import org.ruoyi.domain.bo.ChatMessageBo;
 
 /**
  * 计费管理Service接口
@@ -13,21 +14,21 @@ public interface IChatCostService {
     /**
      * 扣除余额并且保存记录
      *
-     * @param chatRequest 对话信息
+     * @param toRecord 对话信息
      * @param tokens 扣除的token数
      * @return 结果
      */
 
-    void deductToken(ChatRequest chatRequest, int tokens);
+    void deductToken(ChatMessageBo toRecord, int tokens);
 
     /**
      * 扣除余额并且保存记录
      *
-     * @param chatRequest 对话信息
+     * @param toRecord 对话信息
      * @return 结果
      */
 
-    void deductToken(ChatRequest chatRequest);
+    void deductToken(ChatMessageBo toRecord);
 
     /**
      * 直接扣除用户的余额

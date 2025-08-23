@@ -23,7 +23,9 @@ import org.ruoyi.common.chat.entity.chat.MessageResponse;
 import org.ruoyi.common.chat.request.ChatRequest;
 import org.ruoyi.common.core.exception.base.BaseException;
 import org.ruoyi.common.core.service.BaseContext;
+import org.ruoyi.domain.bo.ChatMessageBo;
 import org.ruoyi.domain.vo.ChatModelVo;
+import org.ruoyi.service.IChatMessageService;
 import org.ruoyi.service.IChatModelService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -50,21 +52,30 @@ public class QianWenAiChatServiceImpl  implements IChatService {
     private IChatModelService chatModelService;
     @Autowired
     private IChatCostService chatCostService; // 添加扣费服务
+    @Autowired
+    private IChatMessageService chatMessageService;
 
     private void handleGenerationResult(GenerationResult message, ChatRequest request, SseEmitter emitter, String token, StringBuilder stringBuffer) throws IOException {
 
         try {
             if(!message.getOutput().getChoices().get(0).getFinishReason().equals("null")){
-                ChatRequest chatRequest = new ChatRequest();
-                chatRequest.setRole(org.ruoyi.common.chat.entity.chat.Message.Role.ASSISTANT.getName());
-                chatRequest.setModel(request.getModel());
-                chatRequest.setUserId(request.getUserId());
-                chatRequest.setSessionId(request.getSessionId());
-                chatRequest.setPrompt(stringBuffer.toString());
-//                // 记录会话token
+//                ChatRequest chatRequest = new ChatRequest();
+//                chatRequest.setRole(org.ruoyi.common.chat.entity.chat.Message.Role.ASSISTANT.getName());
+//                chatRequest.setModel(request.getModel());
+//                chatRequest.setUserId(request.getUserId());
+//                chatRequest.setSessionId(request.getSessionId());
+//                chatRequest.setPrompt(stringBuffer.toString());
+                // 记录会话token
                 BaseContext.setCurrentToken(token);
                 // 要减去输入的token
-                chatCostService.deductToken(chatRequest, message.getUsage().getTotalTokens() - message.getUsage().getInputTokens());
+
+                ChatMessageBo toRecordMessage = ChatMessageBo.builder()
+                        .userId(request.getUserId())
+                        .sessionId(request.getSessionId())
+                        .role(org.ruoyi.common.chat.entity.chat.Message.Role.ASSISTANT.getName())
+                        .content(stringBuffer.toString())
+                        .modelName(request.getModel()).build();
+                chatCostService.deductToken(toRecordMessage, message.getUsage().getTotalTokens());
 
                 emitter.send("[DONE]");
                 emitter.complete();
@@ -90,15 +101,22 @@ public class QianWenAiChatServiceImpl  implements IChatService {
     private void handleMultiModalResult(MultiModalConversationResult message, ChatRequest request, SseEmitter emitter, String token, StringBuilder stringBuffer) throws IOException {
         try {
             if(!message.getOutput().getChoices().get(0).getFinishReason().equals("null")){
-                ChatRequest chatRequest = new ChatRequest();
-                chatRequest.setRole(org.ruoyi.common.chat.entity.chat.Message.Role.ASSISTANT.getName());
-                chatRequest.setModel(request.getModel());
-                chatRequest.setUserId(request.getUserId());
-                chatRequest.setSessionId(request.getSessionId());
-                chatRequest.setPrompt(stringBuffer.toString());
+//                ChatRequest chatRequest = new ChatRequest();
+//                chatRequest.setRole(org.ruoyi.common.chat.entity.chat.Message.Role.ASSISTANT.getName());
+//                chatRequest.setModel(request.getModel());
+//                chatRequest.setUserId(request.getUserId());
+//                chatRequest.setSessionId(request.getSessionId());
+//                chatRequest.setPrompt(stringBuffer.toString());
                 // 记录会话token
                 BaseContext.setCurrentToken(token);
-                chatCostService.deductToken(chatRequest, message.getUsage().getOutputTokens() + message.getUsage().getImageTokens());
+
+                ChatMessageBo toRecordMessage = ChatMessageBo.builder()
+                        .userId(request.getUserId())
+                        .sessionId(request.getSessionId())
+                        .role(org.ruoyi.common.chat.entity.chat.Message.Role.ASSISTANT.getName())
+                        .content((String) message.getOutput().getChoices().get(0).getMessage().getContent().get(0).get("text"))
+                        .modelName(request.getModel()).build();
+                chatCostService.deductToken(toRecordMessage, message.getUsage().getTotalTokens());
 
                 emitter.send("[DONE]");
                 emitter.complete();
@@ -114,20 +132,28 @@ public class QianWenAiChatServiceImpl  implements IChatService {
         }
     }
 
-    private void streamCallText(ChatRequest request, SseEmitter emitter)
+    private void streamCallText(ChatRequest chatRequest, SseEmitter emitter)
             throws NoApiKeyException, ApiException, InputRequiredException {
 
         Generation gen = new Generation();
-        GenerationParam param = buildGenerationParam(request);
+        GenerationParam param = buildGenerationParam(chatRequest);
         Flowable<GenerationResult> result = gen.streamCall(param);
-
         StringBuilder stringBuffer = new StringBuilder();
-
         String token = StpUtil.getTokenValue();
+
+        ChatMessageBo toRecord = ChatMessageBo.builder()
+                .userId(chatRequest.getUserId())
+                .sessionId(chatRequest.getSessionId())
+                .role(chatRequest.getRole())
+                .content(chatRequest.getMessages().get(chatRequest.getMessages().size()-1).getContent().toString())
+                .modelName(chatRequest.getModel()).build();
+
+        chatMessageService.insertByBo(toRecord);
+
         result.subscribe(
                 message -> {
                     try {
-                        handleGenerationResult(message, request, emitter, token, stringBuffer);
+                        handleGenerationResult(message, chatRequest, emitter, token, stringBuffer);
                     } catch (IOException e) {
                         log.error("处理生成结果时发生错误: {}", e.getMessage(), e);
                         emitter.completeWithError(e);
@@ -167,11 +193,11 @@ public class QianWenAiChatServiceImpl  implements IChatService {
                 .build();
     }
 
-    private void streamCallMultiModal(ChatRequest request, SseEmitter emitter)
+    private void streamCallMultiModal(ChatRequest chatRequest, SseEmitter emitter)
             throws ApiException, NoApiKeyException, UploadFileException, JsonProcessingException {
-        ChatModelVo chatModelVo = chatModelService.selectModelByName(request.getModel());
+        ChatModelVo chatModelVo = chatModelService.selectModelByName(chatRequest.getModel());
 
-        Object content =  request.getMessages().get(request.getMessages().size()-1).getContent();
+        Object content =  chatRequest.getMessages().get(chatRequest.getMessages().size()-1).getContent();
 
         ArrayList<Map<String, Object>> modals = new ArrayList<>();
 
@@ -185,13 +211,21 @@ public class QianWenAiChatServiceImpl  implements IChatService {
 
                 switch (multiModal.getType()){
                     case "text":
+                        ChatMessageBo toRecord = ChatMessageBo.builder()
+                                .userId(chatRequest.getUserId())
+                                .sessionId(chatRequest.getSessionId())
+                                .role(chatRequest.getRole())
+                                .content(multiModal.getText())
+                                .modelName(chatRequest.getModel()).build();
+
+                        chatMessageService.insertByBo(toRecord);
                         modals.add(Collections.singletonMap("text", multiModal.getText()));
                         break;
                     case "image_url":
                         modals.add(Collections.singletonMap("image", multiModal.getImageUrl().getUrl()));
                         break;
-                    case "video":
-                        modals.add(Collections.singletonMap("video", multiModal.getVideo()));
+                    case "video_url":
+                        modals.add(Collections.singletonMap("video", multiModal.getVideoUrl().getUrl()));
                         break;
                     default:
                         throw new BaseException("请检查你的输入参数");
@@ -201,6 +235,8 @@ public class QianWenAiChatServiceImpl  implements IChatService {
             throw new BaseException("请检查你的输入参数");
         }
 
+        log.warn("!!!!!!!!!!!! {}", modals);
+
         MultiModalMessage userMessage = MultiModalMessage.builder().role(Role.USER.getValue())
                 .content(modals).build();
 
@@ -208,7 +244,7 @@ public class QianWenAiChatServiceImpl  implements IChatService {
         MultiModalConversationParam param = MultiModalConversationParam.builder()
                 .apiKey(chatModelVo.getApiKey())
                 // 此处以qwen-vl-plus为例，可按需更换模型名称。模型列表：https://help.aliyun.com/zh/model-studio/getting-started/models
-                .model(request.getModel())
+                .model(chatRequest.getModel())
                 .message(userMessage)
                 .build();
 
@@ -219,7 +255,7 @@ public class QianWenAiChatServiceImpl  implements IChatService {
         result.subscribe(
                 message -> {
                     try {
-                        handleMultiModalResult(message, request, emitter, token, stringBuffer);
+                        handleMultiModalResult(message, chatRequest, emitter, token, stringBuffer);
                     } catch (IOException e) {
                         log.error("处理生成结果时发生错误: {}", e.getMessage(), e);
                         emitter.completeWithError(e);

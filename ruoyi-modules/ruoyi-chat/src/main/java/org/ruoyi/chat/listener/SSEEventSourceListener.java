@@ -19,6 +19,7 @@ import org.ruoyi.common.chat.request.ChatRequest;
 import org.ruoyi.common.core.service.BaseContext;
 import org.ruoyi.common.core.utils.SpringUtils;
 import org.ruoyi.common.core.utils.StringUtils;
+import org.ruoyi.domain.bo.ChatMessageBo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
@@ -83,17 +84,24 @@ public class SSEEventSourceListener extends EventSourceListener {
             if ("[DONE]".equals(data)) {
                 //成功响应
                 emitter.complete();
-                // 扣除费用
-                ChatRequest chatRequest = new ChatRequest();
-                // 设置对话角色
-                chatRequest.setRole(Message.Role.ASSISTANT.getName());
-                chatRequest.setModel(modelName);
-                chatRequest.setUserId(userId);
-                chatRequest.setSessionId(sessionId);
-                chatRequest.setPrompt(stringBuffer.toString());
+//                // 扣除费用
+//                ChatRequest chatRequest = new ChatRequest();
+//                // 设置对话角色
+//                chatRequest.setRole(Message.Role.ASSISTANT.getName());
+//                chatRequest.setModel(modelName);
+//                chatRequest.setUserId(userId);
+//                chatRequest.setSessionId(sessionId);
+//                chatRequest.setPrompt(stringBuffer.toString());
                 // 记录会话token
                 BaseContext.setCurrentToken(token);
-                chatCostService.deductToken(chatRequest);
+
+                ChatMessageBo toRecordMessage = ChatMessageBo.builder()
+                        .userId(userId)
+                        .sessionId(sessionId)
+                        .role(Message.Role.ASSISTANT.getName())
+                        .content(stringBuffer.toString())
+                        .modelName(modelName).build();
+                chatCostService.deductToken(toRecordMessage);
                 return;
             }
 

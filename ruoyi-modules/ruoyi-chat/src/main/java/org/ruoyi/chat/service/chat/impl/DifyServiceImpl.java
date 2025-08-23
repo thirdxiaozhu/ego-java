@@ -104,14 +104,14 @@ public class DifyServiceImpl implements IChatService {
                         chatSessionService.updateByBo(chatSessionBo);
                     }
                     // 扣除费用
-                    ChatRequest chatRequestResponse = new ChatRequest();
-                    // 设置对话角色
-                    chatRequestResponse.setRole(Message.Role.ASSISTANT.getName());
-                    chatRequestResponse.setModel(chatRequest.getModel());
-                    chatRequestResponse.setUserId(chatRequest.getUserId());
-                    chatRequestResponse.setSessionId(chatRequest.getSessionId());
-                    chatRequestResponse.setPrompt(respMessage.toString());
-                    chatCostService.deductToken(chatRequestResponse);
+//                    ChatRequest chatRequestResponse = new ChatRequest();
+//                    // 设置对话角色
+//                    chatRequestResponse.setRole(Message.Role.ASSISTANT.getName());
+//                    chatRequestResponse.setModel(chatRequest.getModel());
+//                    chatRequestResponse.setUserId(chatRequest.getUserId());
+//                    chatRequestResponse.setSessionId(chatRequest.getSessionId());
+//                    chatRequestResponse.setPrompt(respMessage.toString());
+//                    chatCostService.deductToken(chatRequestResponse);
                 }
 
                 @Override

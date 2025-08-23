@@ -120,9 +120,7 @@ public class SseServiceImpl implements ISseService {
                     };
 
                     List<Message> chatMessages = chatRequest.getMessages();
-                    ChatMessageBo chatMessageBo = new ChatMessageBo();
-                    chatMessageBo.setSessionId(sessionId);
-                    List<ChatMessageVo> histories = chatMessageService.queryList(chatMessageBo);
+                    List<ChatMessageVo> histories = chatMessageService.queryList(ChatMessageBo.builder().sessionId(sessionId).build());
 
                     for(int i = 0; i < histories.size(); i++){
                         ChatMessageVo history = histories.get(i);
@@ -130,13 +128,18 @@ public class SseServiceImpl implements ISseService {
                                 .content(history.getContent())
                                 .build();
                         chatMessages.add(i, mHistory);
-
                     }
-
                 }
 
+//                ChatMessageBo toRecordMessage = ChatMessageBo.builder()
+//                        .userId(chatRequest.getUserId())
+//                        .sessionId(chatRequest.getSessionId())
+//                        .role(chatRequest.getRole())
+//                        .content(stringBuffer.toString())
+//                        .modelName(chatRequest.getModel()).build();
+
                 // 保存消息记录 并扣除费用
-                chatCostService.deductToken(chatRequest);
+//                chatCostService.deductToken(toRecordMessage);
                 chatRequest.setUserId(chatCostService.getUserId());
             }
             chatService.chat(chatRequest, sseEmitter);

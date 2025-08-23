@@ -29,7 +29,8 @@ public class Content {
     private String text;
     @JsonProperty("image_url")
     private ImageUrl imageUrl;
-    private List<String> video;
+    @JsonProperty("video_url")
+    private VideoUrl videoUrl;
 
     /**
      * 生成图片风格
@@ -39,7 +40,7 @@ public class Content {
     public enum Type {
         TEXT("text"),
         IMAGE_URL("image_url"),
-        VIDEO("video"),
+        VIDEO_URL("video_url"),
         ;
         private final String name;
     }
