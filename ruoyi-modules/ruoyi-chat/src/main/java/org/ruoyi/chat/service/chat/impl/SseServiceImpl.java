@@ -11,6 +11,7 @@ import org.ruoyi.chat.service.chat.IChatService;
 import org.ruoyi.chat.service.chat.ISseService;
 import org.ruoyi.chat.util.SSEUtil;
 import org.ruoyi.common.chat.entity.Tts.TextToSpeech;
+import org.ruoyi.common.chat.entity.chat.BaseMessage;
 import org.ruoyi.common.chat.entity.chat.Message;
 import org.ruoyi.common.chat.entity.files.UploadFileResponse;
 import org.ruoyi.common.chat.entity.whisper.WhisperResponse;
@@ -21,15 +22,15 @@ import org.ruoyi.common.core.utils.StringUtils;
 import org.ruoyi.common.core.utils.file.FileUtils;
 import org.ruoyi.common.core.utils.file.MimeTypeUtils;
 import org.ruoyi.common.satoken.utils.LoginHelper;
+import org.ruoyi.domain.bo.ChatMessageBo;
 import org.ruoyi.domain.bo.ChatSessionBo;
 import org.ruoyi.domain.bo.QueryVectorBo;
+import org.ruoyi.domain.vo.ChatMessageVo;
 import org.ruoyi.domain.vo.ChatModelVo;
+import org.ruoyi.domain.vo.ChatSessionVo;
 import org.ruoyi.domain.vo.KnowledgeInfoVo;
 import org.ruoyi.mapper.ChatSessionMapper;
-import org.ruoyi.service.IChatModelService;
-import org.ruoyi.service.IChatSessionService;
-import org.ruoyi.service.IKnowledgeInfoService;
-import org.ruoyi.service.VectorStoreService;
+import org.ruoyi.service.*;
 import org.springframework.core.io.InputStreamResource;
 import org.springframework.core.io.Resource;
 import org.springframework.http.MediaType;
@@ -45,6 +46,7 @@ import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 
 /**
@@ -66,6 +68,8 @@ public class SseServiceImpl implements ISseService {
     private final ChatServiceFactory chatServiceFactory;
 
     private final IChatSessionService chatSessionService;
+
+    private final IChatMessageService chatMessageService;
 
     private final IKnowledgeInfoService knowledgeInfoService;
 
@@ -94,6 +98,9 @@ public class SseServiceImpl implements ISseService {
             // 设置对话角色
             chatRequest.setRole(Message.Role.USER.getName());
 
+            // 根据模型分类调用不同的处理逻辑
+            IChatService chatService = chatServiceFactory.getChatService(chatModelVo.getCategory());
+
             if(LoginHelper.isLogin()){
 				// 设置用户id
                 chatRequest.setUserId(LoginHelper.getUserId());
@@ -105,14 +112,33 @@ public class SseServiceImpl implements ISseService {
                     chatSessionBo.setSessionContent(chatRequest.getPrompt());
                     chatSessionService.insertByBo(chatSessionBo);
                     chatRequest.setSessionId(chatSessionBo.getId());
+                }else {
+                    Long sessionId = chatRequest.getSessionId();
+
+                    if(chatSessionService.queryById(sessionId) == null){
+                        throw new RuntimeException("会话不存在");
+                    };
+
+                    List<Message> chatMessages = chatRequest.getMessages();
+                    ChatMessageBo chatMessageBo = new ChatMessageBo();
+                    chatMessageBo.setSessionId(sessionId);
+                    List<ChatMessageVo> histories = chatMessageService.queryList(chatMessageBo);
+
+                    for(int i = 0; i < histories.size(); i++){
+                        ChatMessageVo history = histories.get(i);
+                        Message mHistory = Message.builder().role(BaseMessage.Role.valueOf(history.getRole().toUpperCase()))
+                                .content(history.getContent())
+                                .build();
+                        chatMessages.add(i, mHistory);
+
+                    }
+
                 }
 
                 // 保存消息记录 并扣除费用
                 chatCostService.deductToken(chatRequest);
                 chatRequest.setUserId(chatCostService.getUserId());
             }
-            // 根据模型分类调用不同的处理逻辑
-            IChatService chatService = chatServiceFactory.getChatService(chatModelVo.getCategory());
             chatService.chat(chatRequest, sseEmitter);
         } catch (Exception e) {
             log.error(e.getMessage(),e);

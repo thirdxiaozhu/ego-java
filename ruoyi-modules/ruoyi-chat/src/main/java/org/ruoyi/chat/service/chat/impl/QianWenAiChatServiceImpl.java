@@ -19,6 +19,7 @@ import org.ruoyi.chat.service.chat.IChatCostService;
 import org.ruoyi.chat.service.chat.IChatService;
 //import org.ruoyi.common.chat.entity.chat.Message as RuoyiMessage;
 import org.ruoyi.common.chat.entity.chat.Content;
+import org.ruoyi.common.chat.entity.chat.MessageResponse;
 import org.ruoyi.common.chat.request.ChatRequest;
 import org.ruoyi.common.core.exception.base.BaseException;
 import org.ruoyi.common.core.service.BaseContext;
@@ -77,7 +78,9 @@ public class QianWenAiChatServiceImpl  implements IChatService {
                 stringBuffer.append(content);
             }
             ObjectMapper mapper = new ObjectMapper();
-            String jsonString = mapper.writeValueAsString(message);
+            MessageResponse resp = MessageResponse.builder().sessionID(request.getSessionId()).userID(request.getUserId()).model(request.getModel()).content(message).build();
+
+            String jsonString = mapper.writeValueAsString(resp);
             emitter.send(Objects.requireNonNull(jsonString));
         } catch (Exception e) {
             log.error(e.getMessage(), e);
@@ -85,12 +88,8 @@ public class QianWenAiChatServiceImpl  implements IChatService {
     }
 
     private void handleMultiModalResult(MultiModalConversationResult message, ChatRequest request, SseEmitter emitter, String token, StringBuilder stringBuffer) throws IOException {
-        ObjectMapper mapper = new ObjectMapper();
-        String jsonString = mapper.writeValueAsString(message);
-        log.info(Objects.requireNonNull(jsonString));
         try {
             if(!message.getOutput().getChoices().get(0).getFinishReason().equals("null")){
-                emitter.complete();
                 ChatRequest chatRequest = new ChatRequest();
                 chatRequest.setRole(org.ruoyi.common.chat.entity.chat.Message.Role.ASSISTANT.getName());
                 chatRequest.setModel(request.getModel());
@@ -106,6 +105,9 @@ public class QianWenAiChatServiceImpl  implements IChatService {
                 return;
             }
 
+            ObjectMapper mapper = new ObjectMapper();
+            MessageResponse resp = MessageResponse.builder().sessionID(request.getSessionId()).userID(request.getUserId()).model(request.getModel()).content(message).build();
+            String jsonString = mapper.writeValueAsString(resp);
             emitter.send(Objects.requireNonNull(jsonString));
         } catch (Exception e) {
             log.error(e.getMessage(), e);
@@ -179,14 +181,17 @@ public class QianWenAiChatServiceImpl  implements IChatService {
                 //先转换为标准json字符串
                 String jsonString = mapper.writeValueAsString(obj);
                 //再转换为对象
-                Content messagePicture = mapper.readValue(jsonString, Content.class);
+                Content multiModal = mapper.readValue(jsonString, Content.class);
 
-                switch (messagePicture.getType()){
+                switch (multiModal.getType()){
                     case "text":
-                        modals.add(Collections.singletonMap("text", messagePicture.getText()));
+                        modals.add(Collections.singletonMap("text", multiModal.getText()));
                         break;
                     case "image_url":
-                        modals.add(Collections.singletonMap("image", messagePicture.getImageUrl().getUrl()));
+                        modals.add(Collections.singletonMap("image", multiModal.getImageUrl().getUrl()));
+                        break;
+                    case "video":
+                        modals.add(Collections.singletonMap("video", multiModal.getVideo()));
                         break;
                     default:
                         throw new BaseException("请检查你的输入参数");
@@ -230,10 +235,6 @@ public class QianWenAiChatServiceImpl  implements IChatService {
 
     @Override
     public SseEmitter chat(ChatRequest chatRequest, SseEmitter emitter) {
-//        this.emitter = emitter;
-//        this.request = chatRequest;
-
-
         // 统一设置事件回调
         emitter.onCompletion(() -> {
             log.info("SSE 连接已完成，正在关闭.");

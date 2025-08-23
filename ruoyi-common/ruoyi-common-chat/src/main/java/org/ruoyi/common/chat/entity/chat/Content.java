@@ -5,6 +5,8 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.*;
 import lombok.extern.slf4j.Slf4j;
 
+import java.util.List;
+
 /**
  *
  * @author https://www.unfbx.com
@@ -19,7 +21,7 @@ import lombok.extern.slf4j.Slf4j;
 @AllArgsConstructor
 public class Content {
     /**
-     * 输入类型：text、image_url
+     * 输入类型：text、image_url、video
      *
      * @see Type
      */
@@ -27,6 +29,7 @@ public class Content {
     private String text;
     @JsonProperty("image_url")
     private ImageUrl imageUrl;
+    private List<String> video;
 
     /**
      * 生成图片风格
@@ -36,6 +39,7 @@ public class Content {
     public enum Type {
         TEXT("text"),
         IMAGE_URL("image_url"),
+        VIDEO("video"),
         ;
         private final String name;
     }
