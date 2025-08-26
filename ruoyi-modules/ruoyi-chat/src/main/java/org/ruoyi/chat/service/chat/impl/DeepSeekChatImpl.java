@@ -40,14 +40,12 @@ public class DeepSeekChatImpl  implements IChatService {
         ChatModelVo chatModelVo = chatModelService.selectModelByName(chatRequest.getModel());
         List<Message> messages = chatRequest.getMessages();
 
-        ChatMessageBo toRecord = ChatMessageBo.builder()
+        chatMessageService.insertByBo(ChatMessageBo.builder()
                 .userId(chatRequest.getUserId())
                 .sessionId(chatRequest.getSessionId())
                 .role(chatRequest.getRole())
                 .content(chatRequest.getMessages().get(chatRequest.getMessages().size()-1).getContent().toString())
-                .modelName(chatRequest.getModel()).build();
-
-        chatMessageService.insertByBo(toRecord);
+                .modelName(chatRequest.getModel()).build());
 
 
         OpenAiStreamClient openAiStreamClient = ChatConfig.createOpenAiStreamClient(chatModelVo.getApiHost(), chatModelVo.getApiKey());

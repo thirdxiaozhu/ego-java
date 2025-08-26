@@ -34,7 +34,7 @@ public class SunoController {
     public String generate(@RequestBody GenerateSuno generateSuno) {
         OkHttpUtil okHttpUtil = okHttpConfig.getOkHttpUtil("suno");
         // 扣除接口费用并且保存消息记录
-        chatCostService.taskDeduct("suno","文生歌曲", NumberUtils.toDouble(okHttpConfig.getGenerate(), 0.3));
+        chatCostService.deductTask("suno","文生歌曲", NumberUtils.toDouble(okHttpConfig.getGenerate(), 0.3));
         // 创建请求体（这里使用JSON作为媒体类型）
         String generateJson = JSONUtil.toJsonStr(generateSuno);
         String url = "suno/generate";

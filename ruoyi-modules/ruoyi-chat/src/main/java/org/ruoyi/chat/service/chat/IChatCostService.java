@@ -1,6 +1,5 @@
 package org.ruoyi.chat.service.chat;
 
-import org.ruoyi.common.chat.request.ChatRequest;
 import org.ruoyi.domain.bo.ChatMessageBo;
 
 /**
@@ -10,17 +9,6 @@ import org.ruoyi.domain.bo.ChatMessageBo;
  * @date 2025-04-08
  */
 public interface IChatCostService {
-
-    /**
-     * 扣除余额并且保存记录
-     *
-     * @param toRecord 对话信息
-     * @param tokens 扣除的token数
-     * @return 结果
-     */
-
-    void deductToken(ChatMessageBo toRecord, int tokens);
-
     /**
      * 扣除余额并且保存记录
      *
@@ -58,7 +46,7 @@ public interface IChatCostService {
      * @param prompt 任务描述
      * @param cost 扣除费用
      */
-    void taskDeduct(String type,String prompt, double cost);
+    void deductTask(String type, String prompt, double cost);
 
 
     /**

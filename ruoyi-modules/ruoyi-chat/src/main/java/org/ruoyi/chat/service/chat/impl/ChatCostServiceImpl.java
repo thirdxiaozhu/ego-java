@@ -42,25 +42,13 @@ public class ChatCostServiceImpl implements IChatCostService {
 
     private final IChatModelService chatModelService;
 
-
-    @Override
-    public void deductToken(ChatMessageBo toRecord, int tokens) {
-        deduct(toRecord, tokens);
-    }
-
     @Override
     public void deductToken(ChatMessageBo toRecord) {
-        int tokens = TikTokensUtil.tokens(toRecord.getModelName(), toRecord.getContent());
-        deduct(toRecord, tokens);
-    }
-
-
-    public void deduct(ChatMessageBo toRecord, int tokens) {
         if(toRecord.getUserId()==null || toRecord.getSessionId()==null){
             return;
         }
 
-        log.info("deductToken->本次提交token数 :{} ", tokens);
+        log.info("deductToken->本次提交token数 :{} ", toRecord.getTotalTokens());
         String modelName = toRecord.getModelName();
 
         // 获得记录的累计token数
@@ -71,7 +59,7 @@ public class ChatCostServiceImpl implements IChatCostService {
         }
 
         // 计算总token数
-        int totalTokens = chatToken.getToken() + tokens;
+        int totalTokens = chatToken.getToken() + toRecord.getTotalTokens();
 
         //当前未付费token
         int token = chatToken.getToken();
@@ -114,11 +102,6 @@ public class ChatCostServiceImpl implements IChatCostService {
             chatTokenService.editToken(chatToken);
         }
 
-        // 保存消息记录
-        chatMessageService.insertByBo(toRecord);
-
-        log.info("deductToken->chatMessageService.insertByBo {} ", toRecord);
-        log.info("----------------------------------------");
     }
 
     @Override
@@ -174,7 +157,7 @@ public class ChatCostServiceImpl implements IChatCostService {
      * 扣除任务费用
      */
     @Override
-    public void taskDeduct(String type,String prompt, double cost) {
+    public void deductTask(String type, String prompt, double cost) {
         // 判断用户是否付费
         checkUserGrade();
         // 扣除费用

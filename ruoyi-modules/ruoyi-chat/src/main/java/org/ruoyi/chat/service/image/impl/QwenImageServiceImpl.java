@@ -6,14 +6,25 @@ import com.alibaba.dashscope.aigc.imagesynthesis.ImageSynthesisResult;
 import com.alibaba.dashscope.exception.ApiException;
 import com.alibaba.dashscope.exception.NoApiKeyException;
 import com.alibaba.dashscope.utils.JsonUtils;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.ruoyi.chat.service.image.ImageService;
 import org.ruoyi.common.chat.request.ImageRequest;
+import org.ruoyi.common.chat.response.ImageResponse;
+import org.ruoyi.common.chat.response.ImageResult;
 import org.ruoyi.common.satoken.utils.LoginHelper;
+import org.ruoyi.domain.bo.ImageRecordBo;
 import org.ruoyi.domain.vo.ChatModelVo;
+import org.ruoyi.domain.vo.ImageRecordVo;
 import org.ruoyi.service.IChatModelService;
+import org.ruoyi.service.IImageService;
 import org.springframework.stereotype.Service;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
 
 @Service
 @Slf4j
@@ -22,33 +33,91 @@ public class QwenImageServiceImpl implements ImageService {
 
     private final IChatModelService chatModelService;
 
+    private final IImageService imageService;
+
 
     public void asyncCall(ImageRequest request) {
+        ChatModelVo chatModelVo = chatModelService.selectModelByName(request.getModel());
         System.out.println("---创建任务----");
         String taskId = this.createAsyncTask(request);
         System.out.println("--等待任务结束返回图像url----");
-        this.waitAsyncTask(taskId);
+        this.waitAsyncTask(chatModelVo.getApiKey(), taskId);
     }
 
+    /**
+     * 创建同步任务
+     * @return taskId
+     */
+    public String createSyncTask(ImageRequest request) throws JsonProcessingException {
+        request.setUserId(LoginHelper.getUserId());
+        ChatModelVo chatModelVo = chatModelService.selectModelByName(request.getModel());
+
+        ImageSynthesisParam param = ImageSynthesisParam.builder()
+                .apiKey(chatModelVo.getApiKey())
+                .model(request.getModel())
+                .prompt(request.getPrompt())
+                .n(request.getN())
+                .size(request.getSize())
+                .build();
+
+        ImageSynthesis imageSynthesis = new ImageSynthesis();
+        ImageSynthesisResult result = null;
+        try {
+            result = imageSynthesis.call(param);
+        } catch (Exception e){
+            throw new RuntimeException(e.getMessage());
+        }
+
+        ImageResponse imageResponse = ImageResponse.builder()
+                .requestID(result.getRequestId())
+                .taskID(result.getOutput().getTaskId())
+                .taskStatus(result.getOutput().getTaskStatus())
+                .totalImages(result.getOutput().getTaskMetrics().getTotal())
+                .succeedImages(result.getOutput().getTaskMetrics().getSucceeded())
+                .failedImages(result.getOutput().getTaskMetrics().getFailed())
+                .build();
+
+        List<ImageResult> imageResults = new ArrayList<>();
+        for(Map<String, String> rawResult: result.getOutput().getResults()){
+            imageResults.add(ImageResult.builder()
+                    .url(rawResult.get("url"))
+                    .origPrompt(rawResult.get("orig_prompt"))
+                    .actualPrompt(rawResult.get("actual_prompt"))
+                    .build());
+
+            imageService.insertByBo(ImageRecordBo.builder()
+                            .prompt(rawResult.get("actual_prompt"))
+                            .url(rawResult.get("url"))
+                            .userId(request.getUserId())
+                            .modelName(request.getModel())
+                            .requestId(result.getRequestId())
+                            .deductCost(1.0)
+                    .build());
+        }
+
+        ObjectMapper mapper = new ObjectMapper();
+        imageResponse.setResults(imageResults);
+
+        String jsonString = mapper.writeValueAsString(imageResponse);
+
+        return jsonString;
+    }
 
     /**
      * 创建异步任务
      * @return taskId
      */
-    public String createAsyncTask(ImageRequest imageRequest) {
+    public String createAsyncTask(ImageRequest request) {
 
-        imageRequest.setUserId(LoginHelper.getUserId());
-        ChatModelVo chatModelVo = chatModelService.selectModelByName(imageRequest.getModel());
+        request.setUserId(LoginHelper.getUserId());
+        ChatModelVo chatModelVo = chatModelService.selectModelByName(request.getModel());
 
-
-        String prompt = "一副典雅庄重的对联悬挂于厅堂之中，房间是个安静古典的中式布置，桌子上放着一些青花瓷，对联上左书“义本生知人机同道善思新”，右书“通云赋智乾坤启数高志远”， 横批“智启通义”，字体飘逸，中间挂在一着一副中国风的画作，内容是岳阳楼。";
-        ImageSynthesisParam param;
-        param = ImageSynthesisParam.builder()
+        ImageSynthesisParam param = ImageSynthesisParam.builder()
                 .apiKey(chatModelVo.getApiKey())
-                .model(imageRequest.getModel())
-                .prompt(prompt)
-                .n(1)
-                .size("1328*1328")
+                .model(request.getModel())
+                .prompt(request.getPrompt())
+                .n(request.getN())
+                .size(request.getSize())
                 .build();
 
         ImageSynthesis imageSynthesis = new ImageSynthesis();
@@ -69,12 +138,12 @@ public class QwenImageServiceImpl implements ImageService {
      * 等待异步任务结束
      * @param taskId 任务id
      * */
-    public void waitAsyncTask(String taskId) {
+    public void waitAsyncTask(String apiKey, String taskId) {
         ImageSynthesis imageSynthesis = new ImageSynthesis();
         ImageSynthesisResult result = null;
         try {
             //如果已经在环境变量中设置了 DASHSCOPE_API_KEY，wait()方法可将apiKey设置为null
-            result = imageSynthesis.wait(taskId, null);
+            result = imageSynthesis.wait(taskId, apiKey);
         } catch (ApiException | NoApiKeyException e){
             throw new RuntimeException(e.getMessage());
         }

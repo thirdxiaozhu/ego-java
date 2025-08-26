@@ -13,6 +13,7 @@ import com.alibaba.dashscope.exception.UploadFileException;
 import com.coze.openapi.client.chat.model.Chat;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import io.reactivex.Flowable;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.ruoyi.chat.enums.ChatModeType;
 import org.ruoyi.chat.service.chat.IChatCostService;
@@ -46,14 +47,12 @@ import java.util.*;
  */
 @Service
 @Slf4j
+@RequiredArgsConstructor
 public class QianWenAiChatServiceImpl  implements IChatService {
 
-    @Autowired
-    private IChatModelService chatModelService;
-    @Autowired
-    private IChatCostService chatCostService; // 添加扣费服务
-    @Autowired
-    private IChatMessageService chatMessageService;
+    private final IChatModelService chatModelService;
+    private final IChatCostService chatCostService; // 添加扣费服务
+    private final IChatMessageService chatMessageService;
 
     private void handleGenerationResult(GenerationResult message, ChatRequest request, SseEmitter emitter, String token, StringBuilder stringBuffer) throws IOException {
 
@@ -74,8 +73,12 @@ public class QianWenAiChatServiceImpl  implements IChatService {
                         .sessionId(request.getSessionId())
                         .role(org.ruoyi.common.chat.entity.chat.Message.Role.ASSISTANT.getName())
                         .content(stringBuffer.toString())
+                        .totalTokens(message.getUsage().getTotalTokens())
                         .modelName(request.getModel()).build();
-                chatCostService.deductToken(toRecordMessage, message.getUsage().getTotalTokens());
+                chatCostService.deductToken(toRecordMessage);
+
+                // 保存消息记录
+                chatMessageService.insertByBo(toRecordMessage);
 
                 emitter.send("[DONE]");
                 emitter.complete();
@@ -115,8 +118,12 @@ public class QianWenAiChatServiceImpl  implements IChatService {
                         .sessionId(request.getSessionId())
                         .role(org.ruoyi.common.chat.entity.chat.Message.Role.ASSISTANT.getName())
                         .content((String) message.getOutput().getChoices().get(0).getMessage().getContent().get(0).get("text"))
+                        .totalTokens(message.getUsage().getTotalTokens())
                         .modelName(request.getModel()).build();
-                chatCostService.deductToken(toRecordMessage, message.getUsage().getTotalTokens());
+                chatCostService.deductToken(toRecordMessage);
+
+                // 保存消息记录
+                chatMessageService.insertByBo(toRecordMessage);
 
                 emitter.send("[DONE]");
                 emitter.complete();

@@ -20,8 +20,10 @@ import org.ruoyi.common.core.service.BaseContext;
 import org.ruoyi.common.core.utils.SpringUtils;
 import org.ruoyi.common.core.utils.StringUtils;
 import org.ruoyi.domain.bo.ChatMessageBo;
+import org.ruoyi.service.IChatMessageService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
 import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 
 import java.util.Objects;
@@ -37,6 +39,10 @@ import java.util.Objects;
 @Component
 public class SSEEventSourceListener extends EventSourceListener {
 
+    @Autowired
+    private IChatMessageService chatMessageService;
+
+
     private SseEmitter emitter;
 
     private Long userId;
@@ -45,12 +51,17 @@ public class SSEEventSourceListener extends EventSourceListener {
 
     private String token;
 
+//    private long totalTokens;
+
+    ObjectMapper mapper;
+
     @Autowired(required = false)
     public SSEEventSourceListener(SseEmitter emitter,Long userId,Long sessionId, String token) {
         this.emitter = emitter;
         this.userId = userId;
         this.sessionId = sessionId;
         this.token = token;
+        this.mapper = new ObjectMapper();
     }
 
 
@@ -81,18 +92,15 @@ public class SSEEventSourceListener extends EventSourceListener {
     @Override
     public void onEvent(@NotNull EventSource eventSource, String id, String type, String data) {
         try {
-            if ("[DONE]".equals(data)) {
+
+            ChatCompletionResponse completionResponse = mapper.readValue(data, ChatCompletionResponse.class);
+            if(completionResponse == null || CollectionUtil.isEmpty(completionResponse.getChoices())){
+                return;
+            }
+
+            if(completionResponse.getChoices().get(0).getFinishReason() != null){
                 //成功响应
                 emitter.complete();
-//                // 扣除费用
-//                ChatRequest chatRequest = new ChatRequest();
-//                // 设置对话角色
-//                chatRequest.setRole(Message.Role.ASSISTANT.getName());
-//                chatRequest.setModel(modelName);
-//                chatRequest.setUserId(userId);
-//                chatRequest.setSessionId(sessionId);
-//                chatRequest.setPrompt(stringBuffer.toString());
-                // 记录会话token
                 BaseContext.setCurrentToken(token);
 
                 ChatMessageBo toRecordMessage = ChatMessageBo.builder()
@@ -100,18 +108,18 @@ public class SSEEventSourceListener extends EventSourceListener {
                         .sessionId(sessionId)
                         .role(Message.Role.ASSISTANT.getName())
                         .content(stringBuffer.toString())
+                        .totalTokens((int) completionResponse.getUsage().getTotalTokens())
                         .modelName(modelName).build();
                 chatCostService.deductToken(toRecordMessage);
+
+                // 保存消息记录
+                chatMessageService.insertByBo(toRecordMessage);
                 return;
             }
 
-            ObjectMapper mapper = new ObjectMapper();
-            ChatCompletionResponse completionResponse = mapper.readValue(data, ChatCompletionResponse.class);
-            if(completionResponse == null || CollectionUtil.isEmpty(completionResponse.getChoices())){
-                return;
-            }
             Object content = completionResponse.getChoices().get(0).getDelta().getContent();
             Object reasoningContent = completionResponse.getChoices().get(0).getDelta().getReasoningContent();
+//            this.totalTokens = completionResponse.getUsage().getTotalTokens();
 
             if(content != null ){
                 if(StringUtils.isEmpty(modelName)){

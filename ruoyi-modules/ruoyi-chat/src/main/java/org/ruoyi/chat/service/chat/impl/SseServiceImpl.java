@@ -131,15 +131,6 @@ public class SseServiceImpl implements ISseService {
                     }
                 }
 
-//                ChatMessageBo toRecordMessage = ChatMessageBo.builder()
-//                        .userId(chatRequest.getUserId())
-//                        .sessionId(chatRequest.getSessionId())
-//                        .role(chatRequest.getRole())
-//                        .content(stringBuffer.toString())
-//                        .modelName(chatRequest.getModel()).build();
-
-                // 保存消息记录 并扣除费用
-//                chatCostService.deductToken(toRecordMessage);
                 chatRequest.setUserId(chatCostService.getUserId());
             }
             chatService.chat(chatRequest, sseEmitter);

@@ -1,5 +1,6 @@
 package org.ruoyi.chat.controller.image;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -18,10 +19,16 @@ public class ImageController {
 
     private final ImageService imageService;
 
-    @PostMapping("/create")
+    @PostMapping("/sync")
     @ResponseBody
-    public R<Long> createRequest(@RequestBody @Valid ImageRequest imageRequest, HttpServletRequest request) {
-        imageService.createAsyncTask(imageRequest);
-        return R.ok();
+    public R<String> createSyncRequest(@RequestBody @Valid ImageRequest imageRequest, HttpServletRequest request) throws JsonProcessingException {
+        return R.ok( imageService.createSyncTask(imageRequest));
+    }
+
+    @PostMapping("/async")
+    @ResponseBody
+    public R<String> createAsyncRequest(@RequestBody @Valid ImageRequest imageRequest, HttpServletRequest request) {
+        return R.ok( imageService.createAsyncTask(imageRequest));
+//        return R.ok( imageService.createAsyncTask(imageRequest));
     }
 }
