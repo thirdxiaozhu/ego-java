@@ -44,4 +44,28 @@ public class ImageRequest {
      */
     private int seed;
 
+    /**
+     * 图像编辑功能
+     */
+    private String editFunction;
+
+    /**
+     * 基础图片地址
+     */
+    private String baseImageUrl;
+
+    /**
+     * 涂抹图片地址
+     */
+    private String maskImageUrl;
+
+    /**
+     * 草图图片地址
+     */
+    private String sketchImageUrl;
+
+    /**
+     * 草图生成风格
+     */
+    private int sketchStyle;
 }

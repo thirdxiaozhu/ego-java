@@ -119,7 +119,7 @@ public class AuthController {
      */
     @PostMapping("/register")
     public R<Void> register(@Validated @RequestBody RegisterBody user, HttpServletRequest request) {
-        String domainName =  request.getServerName();
+        String domainName = request.getServerName();
         user.setDomainName(domainName);
         registerService.register(user);
         return R.ok();

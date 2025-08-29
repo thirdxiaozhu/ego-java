@@ -1,6 +1,8 @@
 package org.ruoyi.common.mail.properties;
 
 import lombok.Data;
+import org.springframework.boot.context.properties.ConfigurationProperties;
+import org.springframework.stereotype.Component;
 
 /**
  * JavaMail 配置属性
@@ -8,6 +10,8 @@ import lombok.Data;
  * @author Michelle.Chung
  */
 @Data
+@Component
+@ConfigurationProperties(prefix = "mail")
 public class MailProperties {
 
     /**
@@ -38,7 +42,7 @@ public class MailProperties {
     /**
      * 密码
      */
-    private String pass;
+    private String  pass;
 
     /**
      * 发送方，遵循RFC-822标准
