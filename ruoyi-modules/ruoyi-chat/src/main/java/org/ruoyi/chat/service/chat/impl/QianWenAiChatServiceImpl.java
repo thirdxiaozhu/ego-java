@@ -242,8 +242,6 @@ public class QianWenAiChatServiceImpl  implements IChatService {
             throw new BaseException("请检查你的输入参数");
         }
 
-        log.warn("!!!!!!!!!!!! {}", modals);
-
         MultiModalMessage userMessage = MultiModalMessage.builder().role(Role.USER.getValue())
                 .content(modals).build();
 

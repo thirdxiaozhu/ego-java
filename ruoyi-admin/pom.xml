@@ -52,6 +52,11 @@
             <artifactId>ego-push</artifactId>
         </dependency>
 
+        <dependency>
+            <groupId>org.ruoyi</groupId>
+            <artifactId>ego-bagent</artifactId>
+        </dependency>
+
 
         <dependency>
             <groupId>org.ruoyi</groupId>

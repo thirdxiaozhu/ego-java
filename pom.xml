@@ -308,6 +308,12 @@
                 <version>${revision}</version>
             </dependency>
 
+            <dependency>
+                <groupId>org.ruoyi</groupId>
+                <artifactId>ego-bagent</artifactId>
+                <version>${revision}</version>
+            </dependency>
+
 
             <dependency>
                 <groupId>org.ruoyi</groupId>
